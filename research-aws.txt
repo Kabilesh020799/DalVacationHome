@@ -1,0 +1,19 @@
+AWS Lambda
+Background research
+Cloud Services & Application Perspective research
+AWS Lambda is a serverless compute service that has the power to host servers without the need to manage and provision resources [1]. It charges only for the compute time consumed. Lambda functions are stateless and run in isolated containers which are managed by AWS. It integrates with different AWS services to allow complex serverless applications to scale automatically. The best practices to implement a Lambda function are optimizing cold starts, implementing error handlers, following the principles of least privilege for IAM roles, and using AWS CloudWatch and X-ray for monitoring and debugging [2]. In this application, AWS Lambda configures a safe and scalable way to handle custom logic related to multi-factor authentication, provides its integrations with other AWS services such as DynamoDB, enables real-time data processing (like a chatbot), and takes care of the application's scalability so that we just need to care about the features and the code for the application. Cost: First 1 million requests are free, and $0.20 per million after that.
+
+AWS Cognito
+AWS Cognito provides sign-in and sign-up for our application, granting needed permissions to users who access other AWS services, and supports multi-factor authentication for security [3]. Identity pools provide temporary AWS credentials to securely access AWS services. By sticking to open standards like OAuth 2.0 and OpenID Connect, it makes sure to follow regulatory compliances and broaden compatibility [4]. In this application, it simplifies the management of users through the easy sign-in and sign-up process and it assures secure access with MFA and OAuth2.0 support. Cost: 50000 monthly active users are free and $0.0055 per monthly active user for next 50000 users
+
+AWS DynamoDB
+DynamoDB is a fully managed NoSQL database, and it provides the same performance no matter the scale. It has a latency in single-digit milliseconds and all hardware provisioning and configuration are taken care of by AWS [5]. DynamoDB has rich features that allow creating fully replicated tables across various AWS regions. It is recommended to design tables with efficient data models that use composite keys and indexes, avoid full table scans, and use caching solutions to optimize performance [6]. In this application, DynamoDB ensures scalability and consistent performance as the number of users and data grows. Ideally, it is good for storing user details, their authentication questions and answers, and session data to secure user data and to make it highly available. Cost: $1.25 per million read request, $1.25 per million write request, First 1GB per month of data transfer is free and additional data transfer charges vary for different regions
+
+Gitlab
+GitLab comes with built-in repository hosting, tools for code review, pipelines for CI/CD, and tracks projects through issue management with boards. Moreover, it accesses to ensure the projects track further Agile or Scrum methodologies to enhance collaboration and adaptiveness.
+
+ 
+References
+[1] AWS Developers, “AWS Lambda “, AWS, [Online]. Available: https://aws.amazon.com/lambda/?c=ser&sec=srv. [Accessed: May.20, 2024].
+[2] AWS Developers, “Best practices for working with AWS Lambda functions”, AWS, [Online]. Available: https://docs.aws.amazon.com/lambda/latest/dg/best-practices.html. [Accessed: May.20, 2024]
+[3] AWS Developers, “What is Amazon Cognito?”, AWS, [Online]. Available: https://docs.aws.amazon.com/cognito/latest/developerguide/what-is-amazon-cognito.html. [Accessed: May. 20, 2024].
