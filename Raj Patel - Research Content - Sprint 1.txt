@@ -1,0 +1,37 @@
+AWS Lex
+Amazon Lex [7] enables the creation of custom bots which can be integrated into web applications. There are two main components involved in creating custom bot:
+1. Intent – An intent represents an action that the user wants to perform. For instance, how do I book a vacation room?
+2. Slot - Additional information which Lex requires to fulfill the intent.
+Once the request is received, the Lambda function is invoked to fulfill the request. AWS Lex uses natural language understanding (NLU) technology which mimics human-like conversations. There are a few properties that can be set to configure the custom chatbot [8].
+1. Language: Language which Lex uses to communicate.
+2. Session timeout: The time up to which Lex retains the context of the ongoing conversation.
+3. COPPA Act: This helps prevent the privacy of children less than 13 years old.
+Cost: $0.00075 / request
+
+AWS Simple Notification Service
+AWS SNS [9] is a pub-sub mechanism enabling producers to publish their requests/data and subscribers to subscribe to SNS topics to which they are interested in. The subscriber is a serverless resource which gets invoked by the SNS.
+SNS can be configured to send custom email notifications to the users by subscribing to a separate topic. An alternative for email notifications is AWS Simple Email Service. Armut, a Turkey-based leading customer service offering company scaled their communication channel using AWS SNS. They closely tracked the number of notifications sent and monitored the impact on the product. The serverless nature of SNS enabled them to scale out as and when the demand grew. This prevented their development team from stopping guessing the demand constantly. They were able to develop this solution in 6 months. So, we can use similar architecture for our notification needs. We can trigger customer notification on login/booking requests [10]. Cost: $2.00 per 100,000 notifications
+
+AWS Simple Queue Service
+AWS SQS [11] is a serverless message queue which is used to decouple microservices. It is primarily used for asynchronous communications and adds excellent value when we want the system to keep functioning even when part of the system is down. SQS automatically scales to handle any amount of data, from a few messages per second to millions per second, without requiring you to manage the underlying infrastructure. Messages are stored redundantly across multiple AWS availability zones, ensuring that they are safe and durable.
+AWS SQS has a concept of a dead-letter queue which would be quite useful in our architecture. Whenever the consumer of the queue is not able to process the message/payload for a few reasons such as corrupted payload ingested by the producer or bug in the consumer code, the consumer can push the message to a dead letter queue which can be analyzed by another serverless compute mechanism/alert support team or take preventive actions. This mechanism would provide a fallback mechanism in case of failure [12]. Cost: $0.09 per GB for first 10TB.
+
+MS Office Suite: Microsoft Word is a widely used word processing software, known for its user-friendly interface and robust features. We intend to utilize it to document each aspect of our project planning and its lifecycle.
+
+Individual contributions - Raj Patel:
+Researched and documented these services: Amazon Lex, AWS SQS and AWS SNS, by referring to research papers and articles. Documented the MS Work aspect in project planning. Cited and added references to the content written.
+
+References:
+
+[7] Amazon Web Services, “Amazon Lex: How It Works” docs.aws.amazon.com [Online]. Available: https://docs.aws.amazon.com/lex/latest/dg/how-it-works.html [Accessed: May
+21, 2024].
+
+[8] The ERIN, “How to build an AI Chatbot using Amazon Lex and Lambda, and Integration with ReactJS”, dev.to/onlyoneerin [Online]. Available: https://dev.to/onlyoneerin/how-to-build- an-ai-chatbot-using-amazon-lex-and-lambda-and-integration-with-reactjs-592j [Accessed: May 25, 2024].
+
+[9] Amazon Web Services, “Amazon Simple Notification Service” aws.amazon.com [Online]. Available: https://aws.amazon.com/sns/ [Accessed: May 21, 2024].
+
+[10] Armut Case Study, “Armut Teknoloji Improves Customer Experience with Scalable Notification System Using AWS”, aws.amazon.com [Online]. Available: https://aws.amazon.com/solutions/case-studies/armut-case-study [Accessed: May 25, 2024].
+
+[11] Amazon Web Services, “Build a Serverless Web Application” docs.aws.amazon.com [Online]. Available: https://aws.amazon.com/getting-started/hands-on/build- serverless-web-app-lambda-apigateway-s3-dynamodb-cognito/?ref=gsrchandson [Accessed: May 21, 2024].
+
+[12] Medium, “AWS SQS Retry Mechanism”, medium.com [Online]. Available: https://medium.com/@ashrafshaikh785/aws-sqs-retry-mechanism-39389934aace [Accessed: May 25, 2024].

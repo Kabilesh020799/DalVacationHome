@@ -1,0 +1,56 @@
+GCP CloudRun:
+It is used to build applications or websites quickly on a fully managed platform [1].
+Builds can be automated whenever code is committed and deployed on a specific branch.
+It automatically scales containers up and down; it follows the pay only when your code is running model.
+In this business case, Cloud Run services can receive messages from Pub/Sub push subscriptions.
+It can be used to host the front end of the web application [2].
+It can easily interact with services from AWS using API gateways and integrate with GCP services using SDK [3].
+Cost: For cpu usage: $0.00001800 / vCPU-second. For memory usage: $0.00000200 / GiB-second.
+
+GCP Cloud Deployment manager:
+You can use Google Cloud Deployment Manager to create a set of Google Cloud resources and manage them as a unit, called a deployment [4].
+Write flexible template and configuration files and use them to create deployments that have a variety of Google Cloud services,
+such as Cloud Storage, Compute Engine, and Cloud SQL, configured to work together.
+For the given business case, it can used as IaC(Infrastructure as Code) [5] to provision and deploy resouces on Google Cloud Platform [6]. 
+Cost: Custom to the resources provisioned and used.
+
+GCP LookerStudio dashboard:
+It allows simple drag-and-drop objects with fully custom property panels in the canvas for visualization of data [7]. 
+It has pre-designed templates and allows you to connect to different data sources. 
+Each data source has a prebuilt connector to ensure the data is easy to access.
+In this business case, it can be used to visualize the login statistics in the front-end application. 
+The case-study for the e-commerce implementation, will be a guidance in the implementation process [8]. 
+Cost: Charged for analysis amount of view even if only viewing it [9].
+
+GCP Google Natural Language API:
+It is pre-trained model that provides Natural Language Processing (NLP) features like sentiment analysis, entity analysis, entity 
+sentiment analysis, content classification, and syntax analysis [10]. In this business case, the customer’s feedback is analyzed 
+to understand the sentiment and presented to all users. Using the score and magnitude, it can be categorized into positive, negative, 
+and neutral [11]. Cost: For sentiment analysis, per 1,000-character unit, $0.0020 per request for requests in the range of 5K-1M [12].
+
+References:
+[1] Google Cloud Developers, “Build applications or websites quickly on a fully managed platform”, Google Cloud, [Online]. 
+    Available: https://cloud.google.com/run/?hl=en. [Accessed: May. 20, 2024].
+[2] Google Cloud Developers, “Serverless Architectures: Building with Google Cloud Run — A Detailed Guide”, Medium, [Online]. 
+    Available: https://medium.com/@sadoksmine8/serverless-architectures-building-with-google-cloud-run-a-detailed-guide-0aa219d75387
+[3] G. Blaquiere, “Cloud Run and Cloud Function: What do I use? And Why?”, Medium, [Online]. Available: https://medium.com/google-cloud/
+    cloud-run-and-cloud-function-what-i-use-and-why-12bb5d3798e1. [Accessed: May. 20, 2024].
+[4] Google Cloud Developers, “Manage Google Cloud resources as a deployment”, Google Cloud, [Online]. Available: https://cloud.google.com/
+    deployment-manager/docs/manage-cloud-resources-deployment. [Accessed: May. 20, 2024].
+[5] Amazon Web Services, “Amazon Lex: How It Works” docs.aws.amazon.com [Online]. Available: https://docs.aws.amazon.com/lex/latest/dg
+    /how-it-works.html [Accessed: May 21, 2024].
+[6] S. Dan, “Deploying Applications with Cloud Launcher and Deployment Manager”, Google Cloud Certified Associate Cloud Engineer Study 
+    Guide, pp.383-404, Mar. 2019, [Online]. Available: https://www.researchgate.net/publication/332067291_Deploying_Applications_with_
+    Cloud_Launcher_and_Deployment_Manager [Accessed: May 21, 2024].
+[7] Google Cloud Developers, “Looker Studio”, Google Cloud, [Online]. Available: https://cloud.google.com/looker-studio#key-features. 
+    [Accessed: May. 20, 2024].
+[8] N. Nurazizah, “Data Visualization with Google Looker Studio (Case Study E-Commerce)”, Medium, [Online]. Available: https://medium.com
+    /@nabilanurazizah/data-visualization-with-google-looker-studio-case-study-e-commerce-8b0053c82c25 [Accessed: May. 25, 2024].
+[9] Roderick, “Looker Studio Pricing”, Google Cloud Community, [Online]. Available: https://www.googlecloudcommunity.com/gc/Looker-Studio/
+    Looker-Studio-Pricing/m-p/542151 [Accessed: May. 20, 2024].
+[10] Google Cloud Developers, “Natural Language AI”, Google Cloud, [Online]. Available: https://cloud.google.com/natural-language#key-
+    features. [Accessed: May. 20, 2024].
+[11] N. Wood, “A Review of Google’s Natural Language API Service”, 2020 Well Living Lab, Inc., Dec. 2020, [Online]. Available: https:
+    //www.researchgate.net/publication/351233913_A_Review_of_Google's_Cloud_Natural_Language_API_Service [Accessed: May. 25, 2024].
+[12] Google Cloud Developers, “Cloud Natural Language Pricing”, Google Cloud, [Online]. Available: https://cloud.google.com/natural-
+    language/pricing#pricing_units . [Accessed: May. 20, 2024].
