@@ -1,0 +1,44 @@
+SupportIntent:
+I have concern with the booking.
+My booking is not processed.
+I want to get a refund.
+I have an issue.
+I want to talk to customer service.
+The room was disgusting.
+The service was not upto the mark.
+
+
+BookingInformation:
+Can you show me my booking details?
+I need the details of my reservation.
+What's the status of my booking?
+Please provide my booking information.
+Can you fetch my reservation details?
+I want to see my booking confirmation.
+Show me the details of my recent booking.
+Get my reservation information.
+Can you pull up my booking details?
+I need to check the details of my booking.
+Can you show me my booking details for reference number {booking-reference-number} ?
+I need the details of my reservation with reference {booking-reference-number} .
+What's the status of my booking with reference number {booking-reference-number} ?
+Please provide my booking information for reference {booking-reference-number} .
+Can you fetch my reservation details for reference number {booking-reference-number} ?
+I want to see my booking confirmation for reference {booking-reference-number} .
+Show me the details of my recent booking with reference number {booking-reference-number} .
+Get my reservation information for reference {booking-reference-number} .
+Can you pull up my booking details with reference number {booking-reference-number} ?
+I need to check the details of my booking with reference number {booking-reference-number} .
+
+Welcome:
+Hi
+Hello
+I need help
+Can you help me?
+
+
+
+Commands:
+
+pip install -r requirements.txt -t .
+zip -r lex-processor.zip .
