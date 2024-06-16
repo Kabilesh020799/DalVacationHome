@@ -1,13 +1,31 @@
 import json
-import random
-import decimal
 import boto3
 from botocore.exceptions import ClientError
 import logging
+import uuid
+import requests
+
 
 logger = logging.getLogger()
 logger.setLevel("INFO")
 
+def generate_ticket_id():
+    return str(uuid.uuid4())
+
+def create_ticket(customerId):
+    ticket_id = generate_ticket_id()
+    url = 'https://us-central1-sample-311412.cloudfunctions.net/publishMessagesToPubSub'
+    headers = {
+        'Content-Type': 'application/json'
+    }
+    data = {
+        'customerId': customerId,
+        'ticketId': ticket_id,
+        'query': 'Hi, I need some help!'
+    }
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+    logger.info(response)
+    return ticket_id
 
 def raise_support_ticket(intent_request):
     session_attributes = get_session_attributes(intent_request)
@@ -22,7 +40,8 @@ def raise_support_ticket(intent_request):
     if response and response.lower() == 'yes':
         if number:
             # send the concern to support agent
-            text = "TicketID: 1234"
+            ticket_id = create_ticket(number)
+            text = "Ticket created successfully with Ticket# " + ticket_id
         else:
             text = "Please login and raise a support request for your concern."
     elif response and response.lower() == 'no':
