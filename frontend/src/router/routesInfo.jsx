@@ -6,6 +6,11 @@ const routes = [
     route: 'signup',
     component: <Signup />
   },
+  {
+    id: 'login',
+    route: 'login',
+    component: <Signup isLogin={true} />
+  },
 ];
 
 export default routes;

@@ -2,8 +2,13 @@ import React, { useState } from 'react';
 import { Container, TextField, Button, Typography, Box, Grid } from '@mui/material';
 import { signUp } from 'aws-amplify/auth'
 import './style.scss';
+import { useNavigate } from 'react-router-dom';
 
-const Signup = () => {
+const Signup = (props) => {
+  const {
+    isLogin,
+  } = props;
+
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -11,6 +16,7 @@ const Signup = () => {
     confirmPassword: '',
   });
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
   const onSubmit = async(e) => {
     e.preventDefault();
@@ -44,6 +50,14 @@ const Signup = () => {
     setForm({ ...form, [name]: value });
   };
 
+  const onClickSignup = () => {
+    if(isLogin) {
+      navigate("/signup");
+    } else {
+      navigate("/login");
+    }
+  };
+
   return (
     <div className='signup'>
       <div className="signup-text"></div>
@@ -56,12 +70,12 @@ const Signup = () => {
             marginTop: 8
           }}
         >
-          <Typography component="h1" variant="h5">
-            Sign Up
+          <Typography component="h1" variant="h5" color="black" fontWeight="bold">
+            {isLogin ? `Login in` : `Sign Up`}
           </Typography>
           <Box component="form" onSubmit={onSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12}>
+              <Grid item xs={12} display={isLogin && 'none'}>
                 <TextField
                   fullWidth
                   label="Name"
@@ -85,7 +99,7 @@ const Signup = () => {
                   helperText={errors.email}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} display={isLogin && 'none'}>
                 <TextField
                   fullWidth
                   name="password"
@@ -100,6 +114,7 @@ const Signup = () => {
               </Grid>
               <Grid item xs={12}>
                 <TextField
+                  fullWidth
                   label="Confirm Password"
                   name="confirmPassword"
                   type="password"
@@ -117,8 +132,12 @@ const Signup = () => {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign Up
+              {isLogin ? `Sign in` : `Sign Up`}
             </Button>
+            {
+              !isLogin ? 
+                <Typography color="black">Have an account? <u className='cursor-pointer' onClick={onClickSignup}>Sign in</u></Typography>
+                : <Typography color="black">Create an account? <u className='cursor-pointer' onClick={onClickSignup}>Sign up</u></Typography>}
           </Box>
         </Box>
       </Container>
