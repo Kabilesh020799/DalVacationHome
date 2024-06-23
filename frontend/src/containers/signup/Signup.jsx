@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Container, TextField, Button, Typography, Box, Grid } from '@mui/material';
-import { signUp } from 'aws-amplify/auth'
+import { Container, TextField, Button, Typography, Box, Grid, Modal } from '@mui/material';
+import { signUp, confirmSignUp, signIn } from 'aws-amplify/auth'
 import './style.scss';
 import { useNavigate } from 'react-router-dom';
 
@@ -16,20 +16,37 @@ const Signup = (props) => {
     confirmPassword: '',
   });
   const [errors, setErrors] = useState({});
+  const [otp, setOtp] = useState('');
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [signUpInfo, setSignUpInfo] = useState(null);
+
   const navigate = useNavigate();
 
   const onSubmit = async(e) => {
     e.preventDefault();
-    if(validate()) {
-      try {
-        await signUp({
-          username: form.email,
-          password: form.password,
-          attributes: { email: form.email, name: form.name }
-        });
-        alert('Sign-up successful! Please check your email for verification.');
-      } catch (error) {
-        console.log(error.message);
+    if(isLogin) {
+      console.log({
+        username: form.email,
+        password: form.password,
+      })
+      const res = await signIn({
+        username: form.email,
+        password: form.password,
+      })
+      console.log(res);
+    } else {
+      if(validate()) {
+        try {
+          const res = await signUp({
+            username: form.email,
+            password: form.password,
+            attributes: { email: form.email, name: form.name }
+          });
+          setSignUpInfo(res);
+          setShowOtpModal(true);
+        } catch (error) {
+          console.log(error.message);
+        }
       }
     }
   };
@@ -55,6 +72,21 @@ const Signup = (props) => {
       navigate("/signup");
     } else {
       navigate("/login");
+    }
+  };
+
+  const handleOtpChange = (e) => {
+    setOtp(e.target.value);
+  };
+
+  const handleVerifyOtp = async () => {
+    try {
+      await confirmSignUp({username: signUpInfo?.userId, confirmationCode: otp});
+      alert('Verification successful! You can now log in.');
+      setShowOtpModal(false);
+      navigate('/login');
+    } catch (error) {
+      console.log(error.message);
     }
   };
 
@@ -99,7 +131,7 @@ const Signup = (props) => {
                   helperText={errors.email}
                 />
               </Grid>
-              <Grid item xs={12} display={isLogin && 'none'}>
+              <Grid item xs={12}>
                 <TextField
                   fullWidth
                   name="password"
@@ -112,7 +144,7 @@ const Signup = (props) => {
                   helperText={errors.password}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} display={isLogin && 'none'}>
                 <TextField
                   fullWidth
                   label="Confirm Password"
@@ -141,6 +173,34 @@ const Signup = (props) => {
           </Box>
         </Box>
       </Container>
+      <Modal open={showOtpModal} onClose={() => setShowOtpModal(false)}>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <Typography variant='h6' component='h2'>
+            Enter OTP
+          </Typography>
+          <TextField
+            fullWidth
+            label='OTP'
+            value={otp}
+            onChange={handleOtpChange}
+            margin='normal'
+          />
+          <Button onClick={handleVerifyOtp} variant='contained' fullWidth>
+            Verify OTP
+          </Button>
+        </Box>
+      </Modal>
     </div>
   );
 };
