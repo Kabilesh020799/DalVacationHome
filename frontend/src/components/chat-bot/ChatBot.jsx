@@ -38,7 +38,7 @@ const ChatBot = () => {
 
     // Make POST API call to backend
     try {
-      const response = await axios.post('https://k6k3r19jqf.execute-api.us-east-1.amazonaws.com/prod/recognize', { requestText, sessionId}, {
+      const response = await axios.post('https://xalxtayttk.execute-api.us-east-1.amazonaws.com/prod/recognize', { requestText, sessionId}, {
         headers: {
           "Content-Type": "application/json",
         },
