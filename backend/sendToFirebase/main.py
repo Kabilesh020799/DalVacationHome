@@ -49,7 +49,8 @@ def process_message(event, context):
             'customerId': customer_id,
             'ticketId': ticket_id,
             'query': query,
-            'agentId': agent_id
+            'agentId': agent_id,
+            'status': 'created'
         })
         
         print(f"Stored message in Realtime Database: {message_data} with agentId: {agent_id}")

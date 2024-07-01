@@ -12,6 +12,16 @@ if not firebase_admin._apps:
 
 @http
 def get_ticket(request):
+    if request.method == 'OPTIONS':
+        headers = {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json'
+        }
+    print('here')
+    headers = {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json'
+        }
     try:
         # Parse the request body
         request_json = request.get_json()
@@ -21,7 +31,7 @@ def get_ticket(request):
             return {
                 'statusCode': 400,
                 'body': json.dumps({"error": "agentId is required in the request body"}),
-                'headers': {'Content-Type': 'application/json'}
+                'headers': headers
             }
 
         # Fetch all tickets from the Realtime Database
@@ -49,18 +59,18 @@ def get_ticket(request):
             return {
                 'statusCode': 200,
                 'body': json.dumps({"error": f"No tickets found for agent ID {agent_id}"}),
-                'headers': {'Content-Type': 'application/json'}
+                'headers': headers
             }
 
         return {
             'statusCode': 200,
             'body': json.dumps(tickets_list),
-            'headers': {'Content-Type': 'application/json'}
+            'headers': headers
         }
 
     except Exception as e:
         return {
             'statusCode': 500,
             'body': json.dumps({"error": str(e)}),
-            'headers': {'Content-Type': 'application/json'}
+            'headers': headers
         }
