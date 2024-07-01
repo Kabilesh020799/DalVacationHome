@@ -1,3 +1,5 @@
+import About from "../containers/home/About";
+import Home from "../containers/home/Home";
 import Signup from "../containers/signup";
 import Tickets from "../containers/tickets"
 const routes = [
@@ -9,7 +11,17 @@ const routes = [
   {
     id: 'tickets',
     route: '/tickets',
-    component: <Tickets />,
+    component: <Tickets />
+  },
+  {
+    id: 'home',
+    route: 'home',
+    component: <Home />
+  },
+  {
+    id: 'about',
+    route: 'about',
+    component: <About />
   },
 ];
 
