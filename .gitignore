@@ -2,3 +2,10 @@ frontend/node_modules
 backend/createSNSSubs/node_modules
 backend/subscribeSNSTopic/node_modules
 frontend/package-lock.json
+frontend/package-lock.json
+.DS_Store
+backend/lex-processor-lambda/lex-processor.zip
+.idea
+backend/lex-backend/.idea
+backend/lex-backend/target
+backend/lex-processor-lambda/.idea
