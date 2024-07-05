@@ -177,6 +177,19 @@ const Signup = (props) => {
                   margin="normal"
                 />
               </Grid>
+              <Grid item xs={12} display={!isLogin && 'none'}>
+                <TextField
+                  fullWidth
+                  label="Cieser Cipher Text"
+                  name="cieserText"
+                  type="text"
+                  value={form.cieserText}
+                  onChange={onChange}
+                  error={!!errors.cieserText}
+                  helperText={errors.cieserText}
+                  margin="normal"
+                />
+              </Grid>
             </Grid>
             <Button
               type="submit"
