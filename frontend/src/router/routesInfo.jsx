@@ -1,6 +1,6 @@
 import About from "../containers/home/About";
 import Home from "../containers/home/Home";
-import LoginPage from "../containers/login/login";
+// import LoginPage from "../containers/login/login";
 import Signup from "../containers/signup";
 
 const routes = [
@@ -12,7 +12,7 @@ const routes = [
   {
     id: 'login',
     route: 'login',
-    component: <LoginPage />
+    component: <Signup isLogin = {true}/>
   },
   {
     id: 'home',

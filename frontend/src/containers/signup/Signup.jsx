@@ -41,7 +41,8 @@ const Signup = (props) => {
             username: form.email,
             password: form.password,
           });
-          navigate('/dashboard');
+          // lambda for caesar cipher
+          // navigate('/securityquestions');
         } catch (error) {
           setSignInError(error.message);
         }
@@ -223,12 +224,12 @@ const Signup = (props) => {
                   helperText={errors.confirmPassword}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} display={isLogin && 'none'}>
                 <Typography component="h6" variant="h6" style={{ color: 'black', marginTop: '5px' }}>
                   Additional Security Questions
                 </Typography>
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} display={isLogin && 'none'}>
                 <TextField
                   fullWidth
                   label="What is your favorite color?"
@@ -239,7 +240,7 @@ const Signup = (props) => {
                   helperText={errors.answer1}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} display={isLogin && 'none'}>
                 <TextField
                   fullWidth
                   label="Which is your favorite car?"
@@ -250,7 +251,7 @@ const Signup = (props) => {
                   helperText={errors.answer2}
                 />
               </Grid>              
-              <Grid item xs={12}>
+              <Grid item xs={12} display={isLogin && 'none'}>
                 <TextField
                   fullWidth
                   label="What is your favorite food?"
@@ -261,7 +262,7 @@ const Signup = (props) => {
                   helperText={errors.answer3}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} display={isLogin && 'none'}>
                 <TextField
                   fullWidth
                   label="Caesar Cipher Key"
