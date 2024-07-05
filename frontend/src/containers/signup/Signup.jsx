@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, TextField, Button, Typography, Box, Grid, Modal } from '@mui/material';
 import { signUp, confirmSignUp, signIn } from 'aws-amplify/auth'
 import './style.scss';
@@ -19,21 +19,25 @@ const Signup = (props) => {
   const [otp, setOtp] = useState('');
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [signUpInfo, setSignUpInfo] = useState(null);
+  const [signInError, setSignInError] = useState(null);
 
   const navigate = useNavigate();
 
   const onSubmit = async(e) => {
     e.preventDefault();
     if(isLogin) {
-      console.log({
-        username: form.email,
-        password: form.password,
-      })
-      const res = await signIn({
-        username: form.email,
-        password: form.password,
-      })
-      console.log(res);
+      console.log(validate());
+      if(validate()) {
+        try {
+          const res = await signIn({
+            username: form.email,
+            password: form.password,
+          });
+          navigate('/dashboard');
+        } catch (error) {
+          setSignInError(error.message);
+        }
+      }
     } else {
       if(validate()) {
         try {
@@ -51,14 +55,24 @@ const Signup = (props) => {
     }
   };
 
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      navigate('/login');
+    } catch (error) {
+      console.log('Error signing out: ', error);
+    }
+  };
+
   const validate = () => {
     let formErrors = {};
     formErrors.firstName = /^[A-Za-z]+$/.test(form.firstName) ? "" : "Name should contain only letter";
     formErrors.lastName = /^[A-Za-z]+$/.test(form.lastName) ? "" : "Name should contain only letters.";
     formErrors.email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) ? "" : "Invaid Email.";
     formErrors.password = form.password.length >= 8 ? "" : "Password must be at least 8 characters.";
-    formErrors.confirmPassword = form.password === form.confirmPassword ? "" : "Passwords do not match.";
+    if(!isLogin) formErrors.confirmPassword = form.password === form.confirmPassword ? "" : "Passwords do not match.";
     setErrors(formErrors);
+    console.log(formErrors);
     return Object.values(formErrors).every(x => x === "");
   };
 
@@ -89,6 +103,12 @@ const Signup = (props) => {
       console.log(error.message);
     }
   };
+
+  useEffect(() => {
+    if(signInError && window.confirm(signInError)) {
+      setSignInError(null);
+    }
+  }, [signInError]);
 
   return (
     <div className='signup'>
