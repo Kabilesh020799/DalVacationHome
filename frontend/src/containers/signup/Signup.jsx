@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, TextField, Button, Typography, Box, Grid, Modal } from '@mui/material';
 import { signUp, confirmSignUp, signIn } from 'aws-amplify/auth'
 import './style.scss';
@@ -27,21 +27,25 @@ const Signup = (props) => {
   const [otp, setOtp] = useState('');
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [signUpInfo, setSignUpInfo] = useState(null);
+  const [signInError, setSignInError] = useState(null);
 
   const navigate = useNavigate();
 
   const onSubmit = async(e) => {
     e.preventDefault();
     if(isLogin) {
-      console.log({
-        username: form.email,
-        password: form.password,
-      })
-      const res = await signIn({
-        username: form.email,
-        password: form.password,
-      })
-      console.log(res);
+      console.log(validate());
+      if(validate()) {
+        try {
+          const res = await signIn({
+            username: form.email,
+            password: form.password,
+          });
+          navigate('/dashboard');
+        } catch (error) {
+          setSignInError(error.message);
+        }
+      }
     } else {
       if(validate()) {
         try {
@@ -72,6 +76,15 @@ const Signup = (props) => {
 }
 }
 
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      navigate('/login');
+    } catch (error) {
+      console.log('Error signing out: ', error);
+    }
+  };
+
   const validate = () => {
     let formErrors = {};
     formErrors.firstName = /^[A-Za-z]+$/.test(form.firstName) ? "" : "Name should contain only letter";
@@ -83,7 +96,9 @@ const Signup = (props) => {
     formErrors.answer2 = form.answer2 ? "" : "Answer to question 2 is required.";
     formErrors.answer3 = form.answer3 ? "" : "Answer to question 3 is required.";
     formErrors.caesarKey = form.caesarKey ? "" : "Caesar cipher key is required.";
+    if(!isLogin) formErrors.confirmPassword = form.password === form.confirmPassword ? "" : "Passwords do not match.";
     setErrors(formErrors);
+    console.log(formErrors);
     return Object.values(formErrors).every(x => x === "");
   };
 
@@ -114,6 +129,12 @@ const Signup = (props) => {
       console.log(error.message);
     }
   };
+
+  useEffect(() => {
+    if(signInError && window.confirm(signInError)) {
+      setSignInError(null);
+    }
+  }, [signInError]);
 
   return (
     <div className='signup'>
@@ -249,6 +270,19 @@ const Signup = (props) => {
                   onChange={onChange}
                   error={!!errors.caesarKey}
                   helperText={errors.caesarKey}
+                />
+              </Grid>
+              <Grid item xs={12} display={!isLogin && 'none'}>
+                <TextField
+                  fullWidth
+                  label="Cieser Cipher Text"
+                  name="cieserText"
+                  type="text"
+                  value={form.cieserText}
+                  onChange={onChange}
+                  error={!!errors.cieserText}
+                  helperText={errors.cieserText}
+                  margin="normal"
                 />
               </Grid>
             </Grid>
