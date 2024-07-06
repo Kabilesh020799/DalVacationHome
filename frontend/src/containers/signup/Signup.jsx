@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Container, TextField, Button, Typography, Box, Grid, Modal } from '@mui/material';
-import { signUp, confirmSignUp, signIn } from 'aws-amplify/auth'
+import { signUp, confirmSignUp, signIn } from 'aws-amplify/auth';
 import './style.scss';
 import { useNavigate } from 'react-router-dom';
 
@@ -28,54 +28,79 @@ const Signup = (props) => {
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [signUpInfo, setSignUpInfo] = useState(null);
   const [signInError, setSignInError] = useState(null);
+  const [caesarCode, setCaesarCode] = useState('');
 
   const navigate = useNavigate();
 
-  const onSubmit = async(e) => {
+  const generateRandomCode = () => {
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let code = '';
+    for (let i = 0; i < 4; i++) {
+      code += alphabet[Math.floor(Math.random() * alphabet.length)];
+    }
+    setCaesarCode(code);
+    localStorage.setItem('caesarCode', code); // Store in local storage
+  };
+
+  useEffect(() => {
+    const storedCaesarCode = localStorage.getItem('caesarCode');
+    if (storedCaesarCode) {
+      setCaesarCode(storedCaesarCode);
+    } else {
+      generateRandomCode();
+    }
+  }, []);
+
+  const onSubmit = async (e) => {
     e.preventDefault();
-    if(isLogin) {
+    if (isLogin) {
       console.log(validate());
-      if(validate()) {
+      alert('Answer the security questions, 2nd factor authentication is done.');
+
+      if (validate()) {
         try {
           const res = await signIn({
             username: form.email,
             password: form.password,
           });
           // lambda for caesar cipher
-          // navigate('/securityquestions');
+           navigate('/securityquestions');
         } catch (error) {
           setSignInError(error.message);
         }
       }
     } else {
-      if(validate()) {
+      if (validate()) {
         try {
           const res = await signUp({
             username: form.email,
             password: form.password,
-            attributes: { email: form.email, name: form.name }
+            attributes: { email: form.email, name: form.name },
           });
-          const response = await axios.post('https://khk7pnql30.execute-api.us-east-1.amazonaws.com/dev/users', {
-            name: form.name,
-            email: form.email,
-            userType: form.userType,
-            password: form.password,
-            question1: form.question1,
-            answer1: form.answer1,
-            question2: form.question2,
-            answer2: form.answer2,
-            question3: form.question3,
-            answer3: form.answer3,
-            caesarKey: form.caesarKey,
-          });
+          const response = await axios.post(
+            'https://khk7pnql30.execute-api.us-east-1.amazonaws.com/dev/users',
+            {
+              name: form.name,
+              email: form.email,
+              userType: form.userType,
+              password: form.password,
+              question1: form.question1,
+              answer1: form.answer1,
+              question2: form.question2,
+              answer2: form.answer2,
+              question3: form.question3,
+              answer3: form.answer3,
+              caesarKey: form.caesarKey,
+            }
+          );
           setSignUpInfo(res);
           setShowOtpModal(true);
         } catch (error) {
           console.log(error.message);
         }
+      }
+    }
   };
-}
-}
 
   const handleSignOut = async () => {
     try {
@@ -88,19 +113,31 @@ const Signup = (props) => {
 
   const validate = () => {
     let formErrors = {};
-    formErrors.firstName = /^[A-Za-z]+$/.test(form.firstName) ? "" : "Name should contain only letter";
-    formErrors.lastName = /^[A-Za-z]+$/.test(form.lastName) ? "" : "Name should contain only letters.";
-    formErrors.email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) ? "" : "Invaid Email.";
-    formErrors.password = form.password.length >= 8 ? "" : "Password must be at least 8 characters.";
-    formErrors.confirmPassword = form.password === form.confirmPassword ? "" : "Passwords do not match.";
-    formErrors.answer1 = form.answer1 ? "" : "Answer to question 1 is required.";
-    formErrors.answer2 = form.answer2 ? "" : "Answer to question 2 is required.";
-    formErrors.answer3 = form.answer3 ? "" : "Answer to question 3 is required.";
-    formErrors.caesarKey = form.caesarKey ? "" : "Caesar cipher key is required.";
-    if(!isLogin) formErrors.confirmPassword = form.password === form.confirmPassword ? "" : "Passwords do not match.";
+    formErrors.firstName = /^[A-Za-z]+$/.test(form.firstName)
+      ? ''
+      : 'Name should contain only letter';
+    formErrors.lastName = /^[A-Za-z]+$/.test(form.lastName)
+      ? ''
+      : 'Name should contain only letters.';
+    formErrors.email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)
+      ? ''
+      : 'Invalid Email.';
+    formErrors.password =
+      form.password.length >= 8 ? '' : 'Password must be at least 8 characters.';
+    formErrors.confirmPassword =
+      form.password === form.confirmPassword ? '' : 'Passwords do not match.';
+    formErrors.answer1 = form.answer1 ? '' : 'Answer to question 1 is required.';
+    formErrors.answer2 = form.answer2 ? '' : 'Answer to question 2 is required.';
+    formErrors.answer3 = form.answer3 ? '' : 'Answer to question 3 is required.';
+    formErrors.caesarKey = form.caesarKey ? '' : 'Caesar cipher key is required.';
+    if (!isLogin)
+      formErrors.confirmPassword =
+        form.password === form.confirmPassword
+          ? ''
+          : 'Passwords do not match.';
     setErrors(formErrors);
     console.log(formErrors);
-    return Object.values(formErrors).every(x => x === "");
+    return Object.values(formErrors).every((x) => x === '');
   };
 
   const onChange = (e) => {
@@ -109,10 +146,10 @@ const Signup = (props) => {
   };
 
   const onClickSignup = () => {
-    if(isLogin) {
-      navigate("/signup");
+    if (isLogin) {
+      navigate('/signup');
     } else {
-      navigate("/login");
+      navigate('/login');
     }
   };
 
@@ -122,7 +159,10 @@ const Signup = (props) => {
 
   const handleVerifyOtp = async () => {
     try {
-      await confirmSignUp({username: signUpInfo?.userId, confirmationCode: otp});
+      await confirmSignUp({
+        username: signUpInfo?.userId,
+        confirmationCode: otp,
+      });
       alert('Verification successful! You can now log in.');
       setShowOtpModal(false);
       navigate('/login');
@@ -132,28 +172,36 @@ const Signup = (props) => {
   };
 
   useEffect(() => {
-    if(signInError && window.confirm(signInError)) {
+    if (signInError && window.confirm(signInError)) {
       setSignInError(null);
     }
   }, [signInError]);
 
   return (
-    <div className='signup'>
+    <div className="signup">
       <div className="signup-text"></div>
-      <Container maxWidth="xs" className='signup-container' 
-      sx={{
-        backgroundColor: '#ffffff',
-        marginTop: '20px'
-      }}>
+      <Container
+        maxWidth="xs"
+        className="signup-container"
+        sx={{
+          backgroundColor: '#ffffff',
+          marginTop: '20px',
+        }}
+      >
         <Box
           sx={{
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            marginTop: '20px'
+            marginTop: '20px',
           }}
         >
-          <Typography component="h1" variant="h5" color="black" fontWeight="bold">
+          <Typography
+            component="h1"
+            variant="h5"
+            color="black"
+            fontWeight="bold"
+          >
             {isLogin ? `Login in` : `Sign Up`}
           </Typography>
           <Box component="form" onSubmit={onSubmit} sx={{ mt: 3 }}>
@@ -182,7 +230,7 @@ const Signup = (props) => {
                   helperText={errors.email}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} display={isLogin && 'none'}>
                 <TextField
                   fullWidth
                   select
@@ -225,7 +273,11 @@ const Signup = (props) => {
                 />
               </Grid>
               <Grid item xs={12} display={isLogin && 'none'}>
-                <Typography component="h6" variant="h6" style={{ color: 'black', marginTop: '5px' }}>
+                <Typography
+                  component="h6"
+                  variant="h6"
+                  style={{ color: 'black', marginTop: '5px' }}
+                >
                   Additional Security Questions
                 </Typography>
               </Grid>
@@ -250,7 +302,7 @@ const Signup = (props) => {
                   error={!!errors.answer2}
                   helperText={errors.answer2}
                 />
-              </Grid>              
+              </Grid>
               <Grid item xs={12} display={isLogin && 'none'}>
                 <TextField
                   fullWidth
@@ -273,18 +325,29 @@ const Signup = (props) => {
                   helperText={errors.caesarKey}
                 />
               </Grid>
-              <Grid item xs={12} display={!isLogin && 'none'}>
-                <TextField
-                  fullWidth
-                  label="Cieser Cipher Text"
-                  name="cieserText"
-                  type="text"
-                  value={form.cieserText}
-                  onChange={onChange}
-                  error={!!errors.cieserText}
-                  helperText={errors.cieserText}
-                  margin="normal"
-                />
+              <Grid container spacing={2} display={!isLogin && 'none'}>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    style={{ marginTop: '8px', paddingLeft: '20px', fontSize: '18px', paddingTop: '24px' }}
+                  >
+                    Caesar Code: {caesarCode}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    label="Caesar Cipher Text"
+                    name="caesarText"
+                    type="text"
+                    value={form.caesarText}
+                    onChange={onChange}
+                    error={!!errors.caesarText}
+                    helperText={errors.caesarText}
+                    margin="normal"
+                  />
+                </Grid>
               </Grid>
             </Grid>
             <Button
@@ -295,10 +358,21 @@ const Signup = (props) => {
             >
               {isLogin ? `Sign in` : `Sign Up`}
             </Button>
-            {
-              !isLogin ? 
-                <Typography color="black">Have an account? <u className='cursor-pointer' onClick={onClickSignup}>Sign in</u></Typography>
-                : <Typography color="black">Create an account? <u className='cursor-pointer' onClick={onClickSignup}>Sign up</u></Typography>}
+            {!isLogin ? (
+              <Typography color="black">
+                Have an account?{' '}
+                <u className="cursor-pointer" onClick={onClickSignup}>
+                  Sign in
+                </u>
+              </Typography>
+            ) : (
+              <Typography color="black">
+                Create an account?{' '}
+                <u className="cursor-pointer" onClick={onClickSignup}>
+                  Sign up
+                </u>
+              </Typography>
+            )}
           </Box>
         </Box>
       </Container>
@@ -315,17 +389,17 @@ const Signup = (props) => {
             p: 4,
           }}
         >
-          <Typography variant='h6' component='h2'>
+          <Typography variant="h6" component="h2">
             Enter OTP
           </Typography>
           <TextField
             fullWidth
-            label='OTP'
+            label="OTP"
             value={otp}
             onChange={handleOtpChange}
-            margin='normal'
+            margin="normal"
           />
-          <Button onClick={handleVerifyOtp} variant='contained' fullWidth>
+          <Button onClick={handleVerifyOtp} variant="contained" fullWidth>
             Verify OTP
           </Button>
         </Box>
@@ -335,5 +409,3 @@ const Signup = (props) => {
 };
 
 export default Signup;
-
-

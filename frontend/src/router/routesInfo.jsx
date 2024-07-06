@@ -2,6 +2,7 @@ import About from "../containers/home/About";
 import Home from "../containers/home/Home";
 // import LoginPage from "../containers/login/login";
 import Signup from "../containers/signup";
+import SecurityQuestions from "../containers/securityQuestion/SecurityQuestions";
 
 const routes = [
   {
@@ -18,6 +19,11 @@ const routes = [
     id: 'home',
     route: 'home',
     component: <Home />
+  },
+  {
+    id: 'securityquestions',
+    route: 'securityquestions',
+    component: <SecurityQuestions />
   },
   {
     id: 'about',
