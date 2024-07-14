@@ -1,33 +1,26 @@
 const AWS = require('aws-sdk');
 const sns = new AWS.SNS();
 
+const existingTopicArn = 'arn:aws:sns:us-east-1:288937723576:DalVactionHome';
+
 exports.handler = async (event) => {
+    const email = event.email;
+    
     try {
-        const email = event.email;
-        const topicArn = 'arn:aws:sns:us-east-1:288937723576:DalVacationHome.fifo';
-
-        const params = {
+        await sns.subscribe({
             Protocol: 'email',
-            TopicArn: topicArn,
-            Endpoint: email,
-        };
+            TopicArn: existingTopicArn,
+            Endpoint: email
+        }).promise();
 
-        const subscribeResponse = await sns.subscribe(params).promise();
-
-        const subscriptionArn = subscribeResponse.SubscriptionArn;
-        
         return {
             statusCode: 200,
-            body: JSON.stringify({
-                message: 'Subscription request sent successfully',
-                subscriptionArn: subscriptionArn
-            }),
+            body: JSON.stringify({ message: 'Subscription successful', topicArn: existingTopicArn })
         };
-    } catch (err) {
-        console.error('Error subscribing email address to SNS:', err);
+    } catch (error) {
         return {
             statusCode: 500,
-            body: JSON.stringify('Error subscribing email address to SNS'),
+            body: JSON.stringify({ message: 'Error subscribing email', error })
         };
     }
 };
