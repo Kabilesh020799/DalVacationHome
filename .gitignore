@@ -1,4 +1,4 @@
 frontend/node_modules
-backend/createSNSSubs/node_modules
+backend/publishSNSMessage/node_modules
 backend/subscribeSNSTopic/node_modules
 frontend/package-lock.json
