@@ -26,7 +26,6 @@ const Signup = (props) => {
   const onSubmit = async(e) => {
     e.preventDefault();
     if(isLogin) {
-      console.log(validate());
       if(validate()) {
         try {
           const res = await signIn({
