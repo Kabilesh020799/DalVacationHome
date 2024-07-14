@@ -3,6 +3,7 @@ import { Container, TextField, Button, Typography, Box, Grid, Modal } from '@mui
 import { signUp, confirmSignUp, signIn } from 'aws-amplify/auth'
 import './style.scss';
 import { useNavigate } from 'react-router-dom';
+import { subscribeSNSTopic } from './apiUtils';
 
 const Signup = (props) => {
   const {
@@ -45,6 +46,7 @@ const Signup = (props) => {
             password: form.password,
             attributes: { email: form.email, name: form.name }
           });
+          subscribeSNSTopic(form?.email);
           setSignUpInfo(res);
           setShowOtpModal(true);
         } catch (error) {
