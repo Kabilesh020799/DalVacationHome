@@ -1,0 +1,45 @@
+Cloud formation
+CloudFormation streamlines infrastructure management with code for versioning, sharing, and reuse across environments. 
+It employs JSON or YAML templates to specify infrastructure setup, configuring resources and their interdependencies. 
+The service orchestrates AWS resource lifecycles, ensuring orderly and accurate provisioning, updates, or deletions. 
+CloudFormation provides DALVacationHome with consistent, scalable infrastructure provisioning, repeatable deployments, and cost management through customizable templates [1]. 
+CloudFormation security best practices include using stack policies, controlling access with IAM, avoiding hard-coded secrets, enabling notifications, detecting environmental drift, logging API calls, regularly scanning for code leaks, and updating EC2 instances to mitigate cyber security risks [2]. 
+Cost: Free tier: 1,000 handler operations per month per account. Beyond the free tier: $0.0009 per handler operation, above 30 seconds $0.00008 per second [3].
+
+GCP Pub/Sub
+Pub/Sub handles large message volumes with low latency. 
+Ensures messages are delivered at least once by persisting and replicating them. 
+Provides low latency and high availability for message processing worldwide. 
+Seamlessly integrates with other Google Cloud services. 
+Supports message ordering within and across topics. 
+DALVacationHome leverages GCP Pub/Sub for efficient and reliable messaging between customers and agents, offering scalability, global reach, and robust logging for data integrity and troubleshooting [4]. 
+It is resilient architecture and pivot in building dynamic, real time applications. 
+Its scalability ensures data flow remains uninterrupted regardless of the volume [5]. 
+Cost: 10 GB of data per month is free. After that $40 per TiB [6].
+
+GCP Firestore
+Firestore is a NoSQL setup which enables flexible data structures. 
+It supports real-time data updates for dynamic apps. Auto-scaling caters to diverse application sizes. 
+Offline capabilities ensure data sync upon reconnection. Security protocols and compliance standards safeguard data. 
+Firestore offers versatile data storage for diverse DALVacationHome needs. 
+It ensures immediate data updates for user-informed decisions. 
+The platform’s offline functionality enhances user experience in connectivity-challenged areas. 
+Its callability supports DALVacationHome’s growth without affecting performance. 
+Robust security and regulatory compliance are integral to Firestore’s data handling [7]. 
+It is a flexible, scalable, and secure NoSQL database ideal for web and mobile app development, combining the best features of Firebase and Google Cloud Platform to offer advanced querying, real-time updates, offline support, and efficient pricing. [8] 
+Cost: Free tier: Stored data: 1 GiB, Document reads: 50,000 per day, writes: 20,000 per day, deletes: 20,000 per day, Outbound data transfer: 10 GiB per month [9].
+
+VS Code
+Visual Studio Code (VS Code) is a versatile editor for Windows, macOS, and Linux. 
+It features IntelliSense, syntax highlighting, and Git integration. 
+It supports extensions for language support, debugging, and running command-line scripts.
+
+[1] Amazon Web Services, “AWS CloudFormation”, AWS, [Online]. Available: https://aws.amazon.com/cloudformation/?nc2=type_a. [Accessed: May 20, 2024].
+[2] Tony Loehr, “AWS CloudFormation Security: 8 Best Practices”, Cycode, [Online]. Available: https://cycode.com/blog/aws-cloudformation-security-8-best-practices/. [Accessed: May. 20, 2024].
+[3] Amazon Web Services, “AWS CloudFormation Pricing”, AWS, [Online]. Available: https://aws.amazon.com/cloudformation/pricing. [Accessed: May 20, 2024].
+[4] Google Cloud Developers, “Pub/Sub”, Google Cloud, [Online]. Available: https://cloud.google.com/pubsub?hl=en. [Accessed: May. 20, 2024].
+[5] Sadok Smine, “Advanced Exploration of Google Cloud Pub/Sub”, medium.com, [Online]. Available: https://medium.com/@sadoksmine8/advanced-exploration-of-google-cloud-pub-sub-39f237cec50a. [Accessed: May. 20, 2024].
+[6] Google Cloud Developers, “Pub/Sub”, Google Cloud, [Online]. Available: https://cloud.google.com/pubsub#pricing. [Accessed: May. 20, 2024].
+[7] Google Cloud Developers, “Firestore”, Google Cloud, [Online]. Available: https://cloud.google.com/firestore?hl=en. [Accessed: May. 20, 2024].
+[8] Alexa Trachim, “Why to Choose Google Cloud Firestore as Your Database?”, itCraft, [Online]. Available: https://itcraftapps.com/blog/why-to-choose-google-cloud-firestore/. [Accessed: May. 20, 2024].
+[9] Google Cloud Developers, “Firestore”, Google Cloud, [Online]. Available: https://cloud.google.com/firestore#pricing. [Accessed: May. 20, 2024].
