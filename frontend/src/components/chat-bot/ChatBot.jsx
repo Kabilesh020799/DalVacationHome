@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import './style.css';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "./style.css";
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [inputText, setInputText] = useState('');
+  const [inputText, setInputText] = useState("");
   const [chatData, setChatData] = useState([]);
 
   useEffect(() => {
     // Load existing chat data from local storage on component mount
-    const storedChatData = JSON.parse(localStorage.getItem('chatData')) || [];
+    const storedChatData = JSON.parse(localStorage.getItem("chatData")) || [];
     setChatData(storedChatData);
-    // TODO remove this 
-    localStorage.setItem('email', 'testgmailcom')
+    // TODO remove this
+    localStorage.setItem("email", "testgmailcom");
   }, []);
 
   const toggleChat = () => {
@@ -28,45 +28,52 @@ const ChatBot = () => {
   };
 
   const handleSend = async () => {
-    if (inputText.trim() === '') return;
+    if (inputText.trim() === "") return;
 
     let requestText = inputText.trim();
-    let sessionId = localStorage.getItem('email');
-    if (inputText.trim().toLowerCase() === 'yes' || inputText.trim().toLowerCase() === 'no') {
-      requestText = requestText + ":" + localStorage.getItem('email');
+    let sessionId = localStorage.getItem("email");
+    if (
+      inputText.trim().toLowerCase() === "yes" ||
+      inputText.trim().toLowerCase() === "no"
+    ) {
+      requestText = requestText + ":" + localStorage.getItem("email");
     }
 
     // Make POST API call to backend
     try {
-      const response = await axios.post('https://xalxtayttk.execute-api.us-east-1.amazonaws.com/prod/recognize', { requestText, sessionId}, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axios.post(
+        "https://xalxtayttk.execute-api.us-east-1.amazonaws.com/prod/recognize",
+        { requestText, sessionId },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       const responseData = response.data;
-      console.log(responseData)
+      console.log(responseData);
       // Update chat data
       const updatedChat = [
         ...chatData,
         { message: inputText.trim(), fromUser: true },
-        { message: responseData, fromUser: false }
+        { message: responseData, fromUser: false },
       ];
 
       setChatData(updatedChat);
 
       // Save updated chat data to local storage
-      localStorage.setItem('chatData', JSON.stringify(updatedChat));
+      localStorage.setItem("chatData", JSON.stringify(updatedChat));
 
       // Clear input
-      setInputText('');
+      setInputText("");
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error("Error sending message:", error);
     }
   };
 
   return (
     <div className="chatbot-container">
-      <div className={`chatbot ${isOpen ? 'open' : ''}`}>
+      <div className={`chatbot ${isOpen ? "open" : ""}`}>
         <div className="chat-header">
           <button className="close-button" onClick={handleClose}>
             Close
@@ -74,7 +81,10 @@ const ChatBot = () => {
         </div>
         <div className="chat-messages">
           {chatData.map((chat, index) => (
-            <div key={index} className={`chat-message ${chat.fromUser ? 'user' : 'bot'}`}>
+            <div
+              key={index}
+              className={`chat-message ${chat.fromUser ? "user" : "bot"}`}
+            >
               {chat.message}
             </div>
           ))}
@@ -89,9 +99,11 @@ const ChatBot = () => {
           <button onClick={handleSend}>Send</button>
         </div>
       </div>
-      {!isOpen && <div className="chat-icon" onClick={toggleChat}>
-        Chat
-      </div>}
+      {!isOpen && (
+        <div className="chat-icon" onClick={toggleChat}>
+          Chat
+        </div>
+      )}
     </div>
   );
 };
