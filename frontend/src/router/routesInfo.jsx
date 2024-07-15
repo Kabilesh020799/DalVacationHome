@@ -1,8 +1,9 @@
 import About from "../containers/home/About";
 import Home from "../containers/home/Home";
-// import LoginPage from "../containers/login/login";
-import Signup from "../containers/signup";
-import SecurityQuestions from "../containers/securityQuestion/SecurityQuestions";
+import Signup from "../containers/authentication/signup/Signup";
+import SecurityQuestions from "../containers/authentication/signup/SecurityQuestions";
+import SecurityAnswers from "../containers/authentication/login/SecurityAnswers";
+import Login from "../containers/authentication/login/Login";
 
 const routes = [
   {
@@ -13,7 +14,7 @@ const routes = [
   {
     id: 'login',
     route: 'login',
-    component: <Signup isLogin = {true}/>
+    component: <Login />
   },
   {
     id: 'home',
@@ -24,6 +25,11 @@ const routes = [
     id: 'securityquestions',
     route: 'securityquestions',
     component: <SecurityQuestions />
+  },
+  {
+    id: 'securityanswers',
+    route: 'securityanswers',
+    component: <SecurityAnswers />
   },
   {
     id: 'about',
