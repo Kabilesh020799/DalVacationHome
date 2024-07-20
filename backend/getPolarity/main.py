@@ -1,5 +1,7 @@
 import json
 from google.cloud import language_v1
+import requests
+
 
 def analyze_sentiment(request):
     # Set CORS headers for the preflight request
@@ -17,34 +19,61 @@ def analyze_sentiment(request):
         'Access-Control-Allow-Origin': '*'
     }
 
-    # Parse the request JSON
-    request_json = request.get_json(silent=True)
-    feedback = request_json.get('feedback')
+    # Define the API Gateway endpoint to get all feedback and corresponding booking ref number
+    api_endpoint = 'https://sgegq6ro6b.execute-api.us-east-1.amazonaws.com/prod/'
 
-    if not feedback:
-        return (json.dumps({'error': 'Feedback not provided'}), 400, headers)
+    # Make a POST request to the API Gateway endpoint
+    try:
+        api_response = requests.post(api_endpoint, json={})
+        api_response.raise_for_status()
+    except requests.RequestException as e:
+        return (json.dumps({'error': 'Error calling API Gateway: {}'.format(str(e))}), 500, headers)
+
+    # Parse the response from the API Gateway
+    api_response_json = api_response.json()
+    print('feedback from api: ', api_response_json)
+
+    # Check if the response is valid and contains 'body'
+    if 'body' not in api_response_json:
+        return (json.dumps({'error': 'Invalid response from API Gateway'}), 500, headers)
+
+    feedback_entries = api_response_json['body']
 
     # Initialize the Google Cloud Natural Language API client
     client = language_v1.LanguageServiceClient()
 
-    # Prepare the document to be analyzed
-    document = language_v1.Document(content=feedback, type_=language_v1.Document.Type.PLAIN_TEXT)
+    analyzed_items = []
 
-    # Use the client to analyze the sentiment of the feedback
-    sentiment = client.analyze_sentiment(request={'document': document}).document_sentiment
+    # Analyze sentiment for each feedback entry
+    for entry in feedback_entries:
+        feedback = entry.get('feedback')
+        bookingref = entry.get('bookingref')
 
-    # Determine sentiment category based on score
-    if sentiment.score >= 0.25:
-        sentiment_category = 'positive'
-    elif sentiment.score <= -0.25:
-        sentiment_category = 'negative'
-    else:
-        sentiment_category = 'neutral'
+        if feedback:
+            # Prepare the document to be analyzed
+            document = language_v1.Document(content=feedback, type_=language_v1.Document.Type.PLAIN_TEXT)
 
-    # Prepare the response
+            # Use the client to analyze the sentiment of the feedback
+            sentiment = client.analyze_sentiment(request={'document': document}).document_sentiment
+
+            # Determine sentiment category based on score
+            if sentiment.score >= 0.25:
+                sentiment_category = 'positive'
+            elif sentiment.score <= -0.25:
+                sentiment_category = 'negative'
+            else:
+                sentiment_category = 'neutral'
+
+            # Append analyzed data to the list
+            analyzed_items.append({
+                'feedback': feedback,
+                'bookingref': bookingref,
+                'sentiment_category': sentiment_category
+            })
+
+    # Prepare the final response
     response = {
-        'feedback': feedback,
-        'sentiment_category': sentiment_category
+        'analyzed_feedback': analyzed_items
     }
 
     return (json.dumps(response), 200, headers)
