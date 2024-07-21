@@ -117,7 +117,7 @@ def fetch_booking_info(intent_request):
     booking_ref_number = get_slot(intent_request, 'booking-reference-number')
 
     #Fetch booking data from DynamoDB
-    text = fetch_data_dynamo(booking_ref_number)
+    text = 'Room is booked' #fetch_data_dynamo(booking_ref_number)
     message =  {
             'contentType': 'PlainText',
             'content': text
