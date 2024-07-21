@@ -12,12 +12,12 @@ import { doc, or, setDoc } from "firebase/firestore";
 const ChatContext = createContext(null);
 
 function ChatProvider({ children }) {
-  const userId = "mark@gmail.com"; // Fetch from auth
+  const userId = "123245asdffsd"; // Fetch from auth
   const [chats, setChats] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const chatsRef = collection(firestore, "chats");
+    const chatsRef = collection(firestore, "tickets");
     const chatsQuery = query(
       chatsRef,
       or(where("customerId", "==", userId), where("agentId", "==", userId))
@@ -54,7 +54,7 @@ function ChatProvider({ children }) {
     currentChat.messages.push(message);
     console.log(currentChat);
     try {
-      const chatDocRef = doc(firestore, "chats", currentChat.ticketId);
+      const chatDocRef = doc(firestore, "tickets", currentChat.ticketId);
 
       await setDoc(chatDocRef, currentChat);
 
@@ -74,7 +74,7 @@ function ChatProvider({ children }) {
     console.log(currentChat);
 
     try {
-      const chatDocRef = doc(firestore, "chats", currentChat.ticketId);
+      const chatDocRef = doc(firestore, "tickets", currentChat.ticketId);
 
       await setDoc(chatDocRef, currentChat);
 

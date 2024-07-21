@@ -4,7 +4,7 @@ import SupportChat from "../../components/support-chat/SupportChat";
 
 const Home = () => {
   // Move this logic to tickets screen after discussing with Shrav
-  const ticketId = "7p4FRvtJWQTFp6M20amZ";
+  const ticketId = "dab2af70-bb4a-4729-9082-f3c5afcb167e";
   const [showChat, setShowChat] = useState(false);
 
   return (

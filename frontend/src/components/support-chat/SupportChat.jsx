@@ -17,7 +17,7 @@ function SupportChat({ ticketId, setShowChat }) {
   if (ongoingChats.loading) {
     return <div>Loading chats...</div>;
   }
-
+  console.log("raj:" + ongoingChats.chats);
   const currentChat = ongoingChats.chats.find(
     (chat) => chat.ticketId === ticketId
   );

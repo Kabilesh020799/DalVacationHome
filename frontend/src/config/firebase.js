@@ -9,17 +9,23 @@ import {
 } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCJt5s3ha8Y1kyXH3g6zsk8i3sMEgWaeDc",
-  authDomain: "serverless-426514.firebaseapp.com",
-  projectId: "serverless-426514",
-  storageBucket: "serverless-426514.appspot.com",
-  messagingSenderId: "212029564174",
-  appId: "1:212029564174:web:f34937198d832cdfa8235f",
-  measurementId: "G-4W1YLYB1FM",
+  apiKey: "AIzaSyAK8K1LKxNuezT-JaaKfA_GFwiSUG00RiE",
+
+  authDomain: "sample-311412.firebaseapp.com",
+
+  databaseURL: "https://sample-311412-default-rtdb.firebaseio.com",
+
+  projectId: "sample-311412",
+
+  storageBucket: "sample-311412.appspot.com",
+
+  messagingSenderId: "433189868184",
+
+  appId: "1:433189868184:web:64519a66f44854e51ab6ed",
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const firestore = getFirestore(app, "chat-messages");
+const firestore = getFirestore(app);
 console.log(firestore);
 export { firestore, collection, query, where, onSnapshot };
