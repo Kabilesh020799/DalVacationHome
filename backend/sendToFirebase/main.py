@@ -4,6 +4,7 @@ import random
 import firebase_admin
 from firebase_admin import credentials, db
 from google.cloud import firestore
+from datetime import datetime
 
 # Initialize Firebase Admin SDK with default credentials and specific database URL
 if not firebase_admin._apps:
@@ -54,6 +55,11 @@ def process_message(event, context):
             'status': 'created'
         })'''
 
+        current_time = datetime.utcnow()
+    
+        # Format the timestamp as a string
+        timestamp_str = current_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')  # ISO 8601 format
+
         # Initialize Firestore client
         firestore_db = firestore.Client()
 
@@ -68,7 +74,8 @@ def process_message(event, context):
                 'to': agent_id
             }],
             'status': 'created',
-            'ticketId': ticket_id
+            'ticketId': ticket_id,
+            'timestamp': timestamp_str
         }
     
         # Define Firestore collection and document
