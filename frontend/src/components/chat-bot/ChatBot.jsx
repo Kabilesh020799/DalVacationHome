@@ -12,7 +12,7 @@ const ChatBot = () => {
     const storedChatData = JSON.parse(localStorage.getItem("chatData")) || [];
     setChatData(storedChatData);
     // TODO remove this
-    localStorage.setItem("email", "testgmailcom");
+    localStorage.setItem("email", "test@gmail.com");
   }, []);
 
   const toggleChat = () => {
@@ -31,7 +31,7 @@ const ChatBot = () => {
     if (inputText.trim() === "") return;
 
     let requestText = inputText.trim();
-    let sessionId = localStorage.getItem("email");
+    let sessionId = localStorage.getItem("email").replace(/[^a-zA-Z0-9]/g, "");
     if (
       inputText.trim().toLowerCase() === "yes" ||
       inputText.trim().toLowerCase() === "no"
