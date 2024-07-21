@@ -76,4 +76,17 @@ def analyze_sentiment(request):
         'analyzed_feedback': analyzed_items
     }
 
+    # Define the endpoint to send the analyzed data
+    update_endpoint = 'https://sgegq6ro6b.execute-api.us-east-1.amazonaws.com/prod/updatesentiment'
+
+    # Make a POST request to the update API endpoint
+    try:
+        update_response = requests.post(update_endpoint, json=response)
+        update_response.raise_for_status()
+    except requests.RequestException as e:
+        return (json.dumps({'error': 'Error calling update API: {}'.format(str(e))}), 500, headers)
+
+    # Return the final response
     return (json.dumps(response), 200, headers)
+
+    #return (json.dumps(response), 200, headers)

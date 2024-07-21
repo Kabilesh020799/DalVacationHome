@@ -2,3 +2,4 @@ google-cloud-language
 flask
 functions-framework
 requests
+boto3
