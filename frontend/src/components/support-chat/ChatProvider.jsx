@@ -12,7 +12,7 @@ import { doc, or, setDoc } from "firebase/firestore";
 const ChatContext = createContext(null);
 
 function ChatProvider({ children }) {
-  const userId = "123245asdffsd"; // Fetch from auth
+  const userId = "test@gmail.com"; // Fetch from auth
   const [chats, setChats] = useState([]);
   const [loading, setLoading] = useState(true);
 
