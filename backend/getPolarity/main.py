@@ -86,7 +86,24 @@ def analyze_sentiment(request):
     except requests.RequestException as e:
         return (json.dumps({'error': 'Error calling update API: {}'.format(str(e))}), 500, headers)
 
+    #return updated sentiments
+    
+    # Define the API Gateway endpoint to get all feedback and corresponding booking ref number
+    api_endpoint = 'https://sgegq6ro6b.execute-api.us-east-1.amazonaws.com/prod/'
+
+    # Make a POST request to the API Gateway endpoint
+    try:
+        api_response = requests.post(api_endpoint, json={})
+        api_response.raise_for_status()
+    except requests.RequestException as e:
+        return (json.dumps({'error': 'Error calling API Gateway: {}'.format(str(e))}), 500, headers)
+
+    # Parse the response from the API Gateway
+    api_response_json = api_response.json()
+    print('feedback from api: ', api_response_json)
+    return(api_response_json,200,headers)
+
     # Return the final response
-    return (json.dumps(response), 200, headers)
+    #return (json.dumps(response), 200, headers)
 
     #return (json.dumps(response), 200, headers)
