@@ -1,65 +1,88 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import './style.scss';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "./style.scss";
+import SupportChat from "../../components/support-chat/SupportChat";
 //request access to server: https://cors-anywhere.herokuapp.com/
 
 const Tickets = () => {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
-  localStorage.setItem('agentId', '123245asdffsd'); //TODO: do this in login page
-  const agentId = localStorage.getItem('agentId'); 
+  const [ticketId, setTicketId] = useState("");
+  const [showChat, setShowChat] = useState(false);
+
+  localStorage.setItem("userId", "123245asdffsd"); //TODO: do this in login page
+  localStorage.setItem("userType", "AGENT"); //TODO: do this in login page
+  const userId = localStorage.getItem("userId");
+  const userType = localStorage.getItem("userType");
 
   useEffect(() => {
     const fetchTickets = async () => {
       try {
         const response = await axios.post(
-          'https://cors-anywhere.herokuapp.com/https://us-central1-sample-311412.cloudfunctions.net/getTicketDetails',
-          { agentId },
+          "https://cors-anywhere.herokuapp.com/https://us-central1-sample-311412.cloudfunctions.net/getTicketDetails",
+          { userId: userId, userType: userType },
           {
             headers: {
-              'Content-Type': 'application/json',
-              'x-requested-with': 'XMLHttpRequest' 
-            }
+              "Content-Type": "application/json",
+              "x-requested-with": "XMLHttpRequest",
+            },
           }
         );
-        const responseData = JSON.parse(response.data.body);
-        console.log(responseData)
-        setTickets(responseData);
+        const responseData = response.data;
+        console.log(responseData);
+
+        console.log(responseData);
+        setTickets(responseData["tickets"]);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching tickets:', error);
+        console.error("Error fetching tickets:", error);
         setLoading(false);
       }
     };
 
     fetchTickets();
-  }, [agentId]);
+  }, [userId]);
 
   const handleCloseTicket = async (ticketId) => {
     try {
       const response = await axios.post(
-        'https://cors-anywhere.herokuapp.com/https://us-central1-sample-311412.cloudfunctions.net/closeTicket',
+        "https://cors-anywhere.herokuapp.com/https://us-central1-sample-311412.cloudfunctions.net/closeTicket",
         { ticketId },
         {
           headers: {
-            'Content-Type': 'application/json',
-            'x-requested-with': 'XMLHttpRequest' 
-          }
+            "Content-Type": "application/json",
+            "x-requested-with": "XMLHttpRequest",
+          },
         }
       );
       console.log(`Ticket ${ticketId} closed successfully.`, response.data);
 
       // update the ticket status locally
-      setTickets(tickets.map(ticket =>
-        ticket.ticketId === ticketId ? { ...ticket, status: 'closed' } : ticket
-      ));
+      setTickets(
+        tickets.map((ticket) =>
+          ticket.ticketId === ticketId
+            ? { ...ticket, status: "closed" }
+            : ticket
+        )
+      );
     } catch (error) {
       console.error(`Error closing ticket ${ticketId}:`, error);
     }
   };
 
-  console.log('tickets',tickets)
-  console.log('loading',loading)
+  function handleShowChatClick(e, ticketId) {
+    e.preventDefault();
+    setShowChat(true);
+    setTicketId(ticketId);
+  }
+
+  function handleChatClose() {
+    setShowChat(false);
+    setTicketId("");
+  }
+
+  console.log(tickets);
+  console.log("loading", loading);
 
   return (
     <div className="ticket-container">
@@ -69,17 +92,46 @@ const Tickets = () => {
       ) : (
         <div className="ticket-list">
           {tickets.length > 0 ? (
-            tickets.map(ticket => (
+            tickets.map((ticket) => (
               <div key={ticket.ticketId} className="ticket-card">
-                <p><strong>Ticket ID:</strong> {ticket.ticketId}</p>
-                <p><strong>Customer ID:</strong> {ticket.customerId}</p>
-                <p><strong>Query:</strong> {ticket.query}</p>
-                <p><strong>Status:</strong> {ticket.status}</p>
-                <button onClick={() => handleCloseTicket(ticket.ticketId)} className="close-button">Close Ticket</button>
+                <p>
+                  <strong>Ticket ID:</strong> {ticket.ticketId}
+                </p>
+                <p>
+                  <strong>Agent ID:</strong>
+                  {ticket.agentId}
+                </p>
+                <p>
+                  <strong>Customer ID:</strong> {ticket.customerId}
+                </p>
+                <p>
+                  <strong>Status:</strong> {ticket.status}
+                </p>
+                <button
+                  onClick={() => handleCloseTicket(ticket.ticketId)}
+                  className="close-button"
+                >
+                  Close Ticket
+                </button>
+                <br></br>
+                <br></br>
+                {ticket.status !== "closed" && (
+                  <button
+                    onClick={(e) => handleShowChatClick(e, ticket.ticketId)}
+                  >
+                    Show Chat
+                  </button>
+                )}
               </div>
             ))
           ) : (
             <p>No tickets found.</p>
+          )}
+          {showChat && (
+            <SupportChat
+              ticketId={ticketId}
+              handleChatClose={handleChatClose}
+            />
           )}
         </div>
       )}

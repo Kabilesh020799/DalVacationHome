@@ -1,76 +1,69 @@
 import json
-import firebase_admin
-from firebase_admin import credentials, db
-from functions_framework import http
+from google.cloud import firestore
 
-# Initialize Firebase Admin SDK with default credentials and specific database URL
-if not firebase_admin._apps:
-    cred = credentials.ApplicationDefault()
-    firebase_admin.initialize_app(cred, {
-        'databaseURL': 'https://sample-311412-default-rtdb.firebaseio.com/'
-    })
-
-@http
 def get_ticket(request):
+    # Set CORS headers for the preflight request
     if request.method == 'OPTIONS':
         headers = {
             'Access-Control-Allow-Origin': '*',
-            'Content-Type': 'application/json'
+            'Access-Control-Allow-Methods': 'POST',
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Max-Age': '3600'
         }
-    print('here')
+        return ('', 204, headers)
+
+    # Set CORS headers for the main request
     headers = {
-            'Access-Control-Allow-Origin': '*',
-            'Content-Type': 'application/json'
-        }
-    try:
-        # Parse the request body
-        request_json = request.get_json()
-        agent_id = request_json.get('agentId')
+        'Access-Control-Allow-Origin': '*'
+    }
 
-        if not agent_id:
-            return {
-                'statusCode': 400,
-                'body': json.dumps({"error": "agentId is required in the request body"}),
-                'headers': headers
+    # Parse the request JSON
+    request_json = request.get_json(silent=True)
+    userId = request_json.get('userId')
+    userType = request_json.get('userType')
+
+    if not userId or not userType:
+        return (json.dumps({'error': 'userId or userType not provided'}), 400, headers)
+
+    # Initialize Firestore client
+    db = firestore.Client()
+
+    # Reference to the 'tickets' collection
+    tickets_ref = db.collection('tickets')
+
+    if userType == 'AGENT':
+        # Query the collection based on the 'agentId' field
+        query = tickets_ref.where('agentId', '==', userId)  # Fixed variable name
+        try:
+            # Execute the query
+            results = query.stream()
+
+            # Collect the results
+            tickets = [doc.to_dict() for doc in results]
+
+            # Prepare the response
+            response = {
+                'tickets': tickets
             }
+            return (json.dumps(response), 200, headers)
+        except Exception as e:
+            return (json.dumps({'error': 'Error querying Firestore: {}'.format(str(e))}), 500, headers)
+    elif userType == 'CUSTOMER':
+        # Query the collection based on the 'agentId' field
+        query = tickets_ref.where('customerId', '==', userId)  # Fixed variable name
+        try:
+            # Execute the query
+            results = query.stream()
 
-        # Fetch all tickets from the Realtime Database
-        tickets_ref = db.reference('tickets')
-        tickets_snapshot = tickets_ref.get()
+            # Collect the results
+            tickets = [doc.to_dict() for doc in results]
 
-        tickets_list = []
-        if tickets_snapshot:
-            for ticket_id, ticket_data in tickets_snapshot.items():
-                if ticket_data.get('agentId') == agent_id:
-                    # Fetch agent details from the Realtime Database
-                    agent_ref = db.reference(f'agents/{agent_id}')
-                    agent_data = agent_ref.get()
-
-                    ticket_info = {
-                        'customerId': ticket_data.get('customerId'),
-                        'agentId': agent_id,
-                        'agentName': agent_data.get('agent_name') if agent_data else None,
-                        'query': ticket_data.get('query'),
-                        'ticketId': ticket_id
-                    }
-                    tickets_list.append(ticket_info)
-
-        if not tickets_list:
-            return {
-                'statusCode': 200,
-                'body': json.dumps({"error": f"No tickets found for agent ID {agent_id}"}),
-                'headers': headers
+            # Prepare the response
+            response = {
+                'tickets': tickets
             }
-
-        return {
-            'statusCode': 200,
-            'body': json.dumps(tickets_list),
-            'headers': headers
-        }
-
-    except Exception as e:
-        return {
-            'statusCode': 500,
-            'body': json.dumps({"error": str(e)}),
-            'headers': headers
-        }
+            return (json.dumps(response), 200, headers)
+        except Exception as e:
+            return (json.dumps({'error': 'Error querying Firestore: {}'.format(str(e))}), 500, headers)
+    else:
+        return (json.dumps({'error': 'Invalid userType'}), 400, headers)
