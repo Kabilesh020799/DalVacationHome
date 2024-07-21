@@ -2,7 +2,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { ChatContext } from "./ChatProvider";
 import "./style.css";
 
-function SupportChat({ ticketId, setShowChat }) {
+function SupportChat({ ticketId, handleChatClose }) {
   const ongoingChats = useContext(ChatContext);
   const [inputMessage, setInputMessage] = useState("");
 
@@ -17,14 +17,13 @@ function SupportChat({ ticketId, setShowChat }) {
   if (ongoingChats.loading) {
     return <div>Loading chats...</div>;
   }
-  console.log("raj:" + ongoingChats.chats);
   const currentChat = ongoingChats.chats.find(
     (chat) => chat.ticketId === ticketId
   );
 
   const closeChatWindow = (e) => {
     e.preventDefault();
-    setShowChat(false);
+    handleChatClose();
   };
 
   const handleSubmit = (e) => {
