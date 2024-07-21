@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./style.scss";
 import SupportChat from "../../components/support-chat/SupportChat";
+import ChatBot from "../../components/chat-bot/ChatBot";
 //request access to server: https://cors-anywhere.herokuapp.com/
 
 const Tickets = () => {
@@ -110,6 +111,7 @@ const Tickets = () => {
                 <button
                   onClick={() => handleCloseTicket(ticket.ticketId)}
                   className="close-button"
+                  disabled={true}
                 >
                   Close Ticket
                 </button>
@@ -133,6 +135,7 @@ const Tickets = () => {
               handleChatClose={handleChatClose}
             />
           )}
+          {/* <ChatBot /> */}
         </div>
       )}
     </div>

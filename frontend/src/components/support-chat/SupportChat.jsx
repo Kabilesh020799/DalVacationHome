@@ -23,6 +23,7 @@ function SupportChat({ ticketId, handleChatClose }) {
 
   const closeChatWindow = (e) => {
     e.preventDefault();
+    setInputMessage("");
     handleChatClose();
   };
 
@@ -60,9 +61,7 @@ function SupportChat({ ticketId, handleChatClose }) {
           onChange={(e) => setInputMessage(e.currentTarget.value)}
           value={inputMessage}
         ></input>
-        <button disabled={inputMessage === ""} onClick={handleSubmit}>
-          Send
-        </button>
+        <button onClick={handleSubmit}>Send</button>
       </div>
     </div>
   );
