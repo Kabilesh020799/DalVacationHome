@@ -10,8 +10,8 @@ const Tickets = () => {
   const [ticketId, setTicketId] = useState("");
   const [showChat, setShowChat] = useState(false);
 
-  localStorage.setItem("userId", "123245asdffsd"); //TODO: do this in login page
-  localStorage.setItem("userType", "AGENT"); //TODO: do this in login page
+  localStorage.setItem("userId", "test@gmail.com"); //TODO: do this in login page
+  localStorage.setItem("userType", "CUSTOMER"); //TODO: do this in login page
   const userId = localStorage.getItem("userId");
   const userType = localStorage.getItem("userType");
 
