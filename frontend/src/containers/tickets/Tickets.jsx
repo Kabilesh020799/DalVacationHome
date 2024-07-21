@@ -20,12 +20,11 @@ const Tickets = () => {
     const fetchTickets = async () => {
       try {
         const response = await axios.post(
-          "https://cors-anywhere.herokuapp.com/https://us-central1-sample-311412.cloudfunctions.net/getTicketDetails",
+          "https://us-central1-sample-311412.cloudfunctions.net/getTickets",
           { userId: userId, userType: userType },
           {
             headers: {
-              "Content-Type": "application/json",
-              "x-requested-with": "XMLHttpRequest",
+              "Content-Type": "application/json"
             },
           }
         );
@@ -45,14 +44,24 @@ const Tickets = () => {
   }, [userId]);
 
   const handleCloseTicket = async (ticketId) => {
+    console.log('close ticket button clicked')
     try {
+
+      // Find the ticket with the given ID
+      const ticket = tickets.find((ticket) => ticket.ticketId === ticketId);
+            
+      // Check if the ticket is already closed
+      if (ticket && ticket.status === "closed") {
+          alert('Ticket is already closed.');
+          return; // Exit the function if the ticket is already closed
+      }
+
       const response = await axios.post(
-        "https://cors-anywhere.herokuapp.com/https://us-central1-sample-311412.cloudfunctions.net/closeTicket",
+        "https://us-central1-sample-311412.cloudfunctions.net/closeTicket",
         { ticketId },
         {
           headers: {
-            "Content-Type": "application/json",
-            "x-requested-with": "XMLHttpRequest",
+            "Content-Type": "application/json"
           },
         }
       );
@@ -111,10 +120,7 @@ const Tickets = () => {
                 <button
                   onClick={() => handleCloseTicket(ticket.ticketId)}
                   className="close-button"
-                  disabled={true}
-                >
-                  Close Ticket
-                </button>
+                >Close Ticket</button>
                 <br></br>
                 <br></br>
                 {ticket.status !== "closed" && (
