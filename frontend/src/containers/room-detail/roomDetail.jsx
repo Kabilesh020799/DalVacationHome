@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import { rooms } from '../home/constants';
+import { Button } from '@mui/material';
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
@@ -30,10 +31,21 @@ const RoomDetail = () => {
       />
       <Container>
         <Box sx={{ my: 4 }}>
-          <Typography gutterBottom variant="h4" component="div">
-            {room.name}
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
+          <Box 
+            sx={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center' 
+            }}
+          >
+            <Typography gutterBottom variant="h4" component="div">
+              {room.name}
+            </Typography>
+            <Button variant="contained" color="primary">
+              Book Now
+            </Button>
+          </Box>
+          <Typography variant="body1" color="text.secondary" sx={{ mt: 2 }}>
             Number of beds: {room.beds}
           </Typography>
         </Box>
