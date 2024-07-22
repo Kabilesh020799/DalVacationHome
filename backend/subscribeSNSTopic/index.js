@@ -1,33 +1,36 @@
 const AWS = require('aws-sdk');
-const sns = new AWS.SNS();
+const sns = new AWS.SNS({ region: 'us-east-1' });
 
 exports.handler = async (event) => {
-    try {
-        const email = event.email;
-        const topicArn = 'arn:aws:sns:us-east-1:288937723576:DalVacationHome.fifo';
+    const email = event.email;
 
-        const params = {
-            Protocol: 'email',
-            TopicArn: topicArn,
-            Endpoint: email,
+    if (!email) {
+        return {
+            statusCode: 400,
+            body: JSON.stringify({ message: 'Email is required' })
         };
+    }
 
-        const subscribeResponse = await sns.subscribe(params).promise();
+    const params = {
+        Protocol: 'email',
+        TopicArn: 'arn:aws:sns:us-east-1:288937723576:DalVactionHome',
+        Endpoint: email,
+        Attributes: {
+            FilterPolicy: JSON.stringify({ email: [email] })
+        }
+    };
 
-        const subscriptionArn = subscribeResponse.SubscriptionArn;
-        
+    try {
+        await sns.subscribe(params).promise();
         return {
             statusCode: 200,
-            body: JSON.stringify({
-                message: 'Subscription request sent successfully',
-                subscriptionArn: subscriptionArn
-            }),
+            body: JSON.stringify({ message: 'Subscription successful', email: email })
         };
-    } catch (err) {
-        console.error('Error subscribing email address to SNS:', err);
+    } catch (error) {
+        console.error('Error subscribing email:', error);
         return {
             statusCode: 500,
-            body: JSON.stringify('Error subscribing email address to SNS'),
+            body: JSON.stringify({ message: 'Error subscribing email', error })
         };
     }
 };

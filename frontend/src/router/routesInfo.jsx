@@ -5,6 +5,7 @@ import SecurityQuestions from "../containers/authentication/signup/SecurityQuest
 import SecurityAnswers from "../containers/authentication/login/SecurityAnswers";
 import Login from "../containers/authentication/login/Login";
 
+import Tickets from "../containers/tickets"
 const routes = [
   {
     id: 'signup',
@@ -30,6 +31,21 @@ const routes = [
     id: 'securityanswers',
     route: 'securityanswers',
     component: <SecurityAnswers />
+  },
+  {
+    id: 'about',
+    route: 'about',
+    component: <About />
+  },
+  {
+    id: 'tickets',
+    route: '/tickets',
+    component: <Tickets />
+  },
+  {
+    id: 'home',
+    route: 'home',
+    component: <Home />
   },
   {
     id: 'about',
