@@ -58,6 +58,11 @@ const routes = [
     route: '/feedback',
     component: <Feedback />
   },
+  {
+    id: 'room',
+    route: '/room',
+    component: <div>Room</div>
+  }
 ];
 
 export default routes;

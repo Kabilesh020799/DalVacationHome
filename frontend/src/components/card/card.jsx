@@ -5,7 +5,7 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import CardActionArea from '@mui/material/CardActionArea';
 
-const Card = ({ image, name, beds }) => {
+const RoomCard = ({ image, name, beds }) => {
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardActionArea>
@@ -28,4 +28,4 @@ const Card = ({ image, name, beds }) => {
   );
 };
 
-export default Card;
+export default RoomCard;
