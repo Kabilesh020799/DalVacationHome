@@ -6,6 +6,7 @@ import SecurityAnswers from "../containers/authentication/login/SecurityAnswers"
 import Login from "../containers/authentication/login/Login";
 
 import Tickets from "../containers/tickets"
+import Feedback from "../containers/feedback"
 const routes = [
   {
     id: 'signup',
@@ -51,6 +52,11 @@ const routes = [
     id: 'about',
     route: 'about',
     component: <About />
+  },
+  {
+    id: 'feedback',
+    route: '/feedback',
+    component: <Feedback />
   },
 ];
 
