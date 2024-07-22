@@ -10,8 +10,8 @@ import { useNavigate } from "react-router-dom";
 const Home = () => {
   const navigate = useNavigate();
 
-  const onClickCard = () => {
-    navigate('/room');  
+  const onClickCard = (id) => {
+    navigate('/room?roomId=' + id);  
   };
 
   return (
@@ -22,7 +22,7 @@ const Home = () => {
       </main>
       <Grid container spacing={2} className="home-cards">
         {rooms.map((room, index) => (
-          <Grid item xs={12} sm={6} md={4} key={index} onClick={onClickCard}>
+          <Grid item xs={12} sm={6} md={4} key={index} onClick={() => onClickCard(room?.id)}>
             <RoomCard 
               image={room?.image}
               name={room?.name}

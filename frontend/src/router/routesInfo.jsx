@@ -7,6 +7,7 @@ import Login from "../containers/authentication/login/Login";
 
 import Tickets from "../containers/tickets"
 import Feedback from "../containers/feedback"
+import RoomDetail from "../containers/room-detail";
 const routes = [
   {
     id: 'signup',
@@ -61,7 +62,7 @@ const routes = [
   {
     id: 'room',
     route: '/room',
-    component: <div>Room</div>
+    component: <RoomDetail />
   }
 ];
 
