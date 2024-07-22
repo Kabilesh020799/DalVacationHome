@@ -10,12 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@aws-amplify/auth": "^6.3.8",
     "@aws-amplify/ui-react": "^6.1.12",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
+    "@mui/icons-material": "^5.15.20",
+    "amazon-cognito-identity-js": "^6.3.12",
+    "axios": "^1.7.2",
     "@mui/material": "^5.15.19",
     "aws-amplify": "^6.3.6",
-    "axios": "^1.7.2",
     "axois": "^0.0.1-security",
     "cors": "^2.8.5",
     "firebase": "^10.12.3",

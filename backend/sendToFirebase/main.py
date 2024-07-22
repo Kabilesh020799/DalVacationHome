@@ -1,6 +1,5 @@
 import base64
 import json
-import random
 import firebase_admin
 from firebase_admin import credentials, db
 from google.cloud import firestore
@@ -30,21 +29,6 @@ def process_message(event, context):
         if not all([customer_id, ticket_id, query]):
             raise ValueError("Missing fields in the message data")
         
-        # Retrieve agents from the Realtime Database
-        agents_ref = db.reference('agents')
-        agents = agents_ref.get()
-        
-        if not agents:
-            raise ValueError("No agents found in the database")
-
-        # Randomly select an agent
-        agent_id = random.choice(list(agents.keys()))
-        agent_data = agents[agent_id]
-        agent_name = agent_data.get('agent_name')
-
-        if not agent_id or not agent_name:
-            raise ValueError("Missing agent_id or agent_name in the selected agent data")
-
         # Create a document in Realtime Database
         #ref = db.reference(f'tickets/{ticket_id}')
         '''ref.set({
