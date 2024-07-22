@@ -44,11 +44,6 @@ const routes = [
     component: <Tickets />
   },
   {
-    id: 'home',
-    route: 'home',
-    component: <Home />
-  },
-  {
     id: 'about',
     route: 'about',
     component: <About />

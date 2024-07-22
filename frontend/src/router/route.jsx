@@ -16,7 +16,7 @@ const MainRoute = () => {
       }
       <Route
         path='*'
-        element={<Navigate to="/signup" />}
+        element={<Navigate to="/home" />}
       />
     </Routes>
   );
