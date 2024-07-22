@@ -1,8 +1,9 @@
 import base64
 import json
-import random
 import firebase_admin
 from firebase_admin import credentials, db
+from google.cloud import firestore
+from datetime import datetime
 
 # Initialize Firebase Admin SDK with default credentials and specific database URL
 if not firebase_admin._apps:
@@ -28,32 +29,56 @@ def process_message(event, context):
         if not all([customer_id, ticket_id, query]):
             raise ValueError("Missing fields in the message data")
         
-        # Retrieve agents from the Realtime Database
-        agents_ref = db.reference('agents')
-        agents = agents_ref.get()
-        
-        if not agents:
-            raise ValueError("No agents found in the database")
-
-        # Randomly select an agent
-        agent_id = random.choice(list(agents.keys()))
-        agent_data = agents[agent_id]
-        agent_name = agent_data.get('agent_name')
-
-        if not agent_id or not agent_name:
-            raise ValueError("Missing agent_id or agent_name in the selected agent data")
-
         # Create a document in Realtime Database
-        ref = db.reference(f'tickets/{ticket_id}')
-        ref.set({
+        #ref = db.reference(f'tickets/{ticket_id}')
+        '''ref.set({
             'customerId': customer_id,
             'ticketId': ticket_id,
             'query': query,
             'agentId': agent_id,
             'status': 'created'
-        })
-        
-        print(f"Stored message in Realtime Database: {message_data} with agentId: {agent_id}")
+        })'''
+
+        current_time = datetime.utcnow()
+    
+        # Format the timestamp as a string
+        timestamp_str = current_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')  # ISO 8601 format
+
+        # Initialize Firestore client
+        firestore_db = firestore.Client()
+
+        # Create entry dictionary
+        create_entry = {
+            'agentId': agent_id,
+            'customerId': customer_id,
+            'messages': [{
+                'from': customer_id,
+                'message': query,
+                'read': False,
+                'to': agent_id
+            }],
+            'status': 'created',
+            'ticketId': ticket_id,
+            'timestamp': timestamp_str
+        }
+    
+        # Define Firestore collection and document
+        collection_name = 'tickets'
+        document_id = ticket_id  # Use ticket_id as the document ID
+        tickets_ref = firestore_db.collection(collection_name).document(document_id)
+
+        try:
+            # Store the entry in Firestore
+            tickets_ref.set(create_entry)
+            return {
+                'statusCode': 200,
+                'body': json.dumps({'message': 'Ticket stored successfully in Firestore db with agentId'})
+            }
+        except Exception as e:
+            return {
+                'statusCode': 500,
+                'body': json.dumps({'error': 'Error storing ticket: {}'.format(str(e))})
+            }
         
     except Exception as e:
         print(f"Error processing message: {e}")

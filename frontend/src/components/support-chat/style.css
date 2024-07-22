@@ -1,0 +1,33 @@
+.chat-window {
+    display: flex;
+    flex-direction: column;
+    border: 2px solid black;
+
+}
+
+.chat-nav {
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(94, 57, 61);
+    align-items: end;
+}
+
+.close-button {
+    background-color: red;
+}
+
+.chat-content {
+    max-height: 50vh;
+    overflow: auto;
+}
+
+.content-right {
+    text-align: right;
+    margin: 10px;
+}
+
+.content-left {
+    text-align: left;
+    margin: 10px;
+}
+
