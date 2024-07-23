@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, TextField, Button, Typography, Box } from '@mui/material';
+import { Container, TextField, Button, Typography, Box, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -13,6 +13,7 @@ const SecurityQuestion = () => {
     question3: '',
     answer3: '',
     caesarKey: '',
+    userType: '', 
   });
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ const SecurityQuestion = () => {
           answer2: form.answer2,
           answer3: form.answer3,
           caesarKey: form.caesarKey,
+          userType: form.userType,
         });
         alert('Sign Up Successful!');
         navigate('/login');
@@ -66,6 +68,7 @@ const SecurityQuestion = () => {
     formErrors.answer2 = form.answer2 ? '' : 'Answer to question 2 is required.';
     formErrors.answer3 = form.answer3 ? '' : 'Answer to question 3 is required.';
     formErrors.caesarKey = form.caesarKey ? '' : 'Caesar cipher key is required.';
+    formErrors.userType = form.userType ? '' : 'User type is required.'; 
     setErrors(formErrors);
     return Object.values(formErrors).every((x) => x === '');
   };
@@ -127,6 +130,20 @@ const SecurityQuestion = () => {
             helperText={errors.caesarKey}
             required
           />
+          <FormControl fullWidth margin="normal" error={!!errors.userType}>
+            <InputLabel>User Type</InputLabel>
+            <Select
+              label="User Type"
+              name="userType"
+              value={form.userType}
+              onChange={onChange}
+              required
+            >
+              <MenuItem value="Agent">Agent</MenuItem>
+              <MenuItem value="Customer">Customer</MenuItem>
+            </Select>
+            {errors.userType && <Typography color="error">{errors.userType}</Typography>}
+          </FormControl>
           <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
             Sign Up
           </Button>
