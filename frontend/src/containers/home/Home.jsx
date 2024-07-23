@@ -6,51 +6,23 @@ import { signOut, getCurrentUser } from 'aws-amplify/auth';
 const Home = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  async function currentAuthenticatedUser() {
-    try {
-      const { username, userId, signInDetails } = await getCurrentUser();
-      console.log(`The username: ${username}`);
-      console.log(`The userId: ${userId}`);
-      console.log(`The signInDetails: ${signInDetails}`);
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-    useEffect(() => {
-    const checkUser = async function currentAuthenticatedUser() {
+  useEffect(() => {
+    const checkUser = async () => {
       try {
-        const { username, userId, signInDetails } = await getCurrentUser();
-        console.log(`The username: ${username}`);
-        console.log(`The userId: ${userId}`);
-        console.log(`The signInDetails: ${signInDetails}`);
-                setIsLoggedIn(true);
-
+        await getCurrentUser();
+        setIsLoggedIn(true);
       } catch {
         setIsLoggedIn(false);
-}
+      }
     };
 
     checkUser();
   }, []);
 
-
-  // useEffect(() => {
-  //   const checkUser = async () => {
-  //     try {
-  //       await currentAuthenticatedUser();
-  //       setIsLoggedIn(true);
-  //     } catch {
-  //       setIsLoggedIn(false);
-  //     }
-  //   };
-
-  //   checkUser();
-  // }, []);
-
   const handleSignOut = async () => {
     try {
       await signOut();
+      localStorage.clear();
       setIsLoggedIn(false);
     } catch (error) {
       console.log('Error signing out: ', error);
