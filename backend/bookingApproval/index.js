@@ -11,14 +11,16 @@ exports.handler = async (event) => {
         const messageBody = JSON.parse(record.body);
         const { email, roomId } = messageBody;
 
+        const bookingReference = uuidv4();
+
         const bookingExists = await checkRoomBooking(roomId);
 
         if (!bookingExists) {
-            const bookingReference = uuidv4();
             await saveRoomBooking(email, roomId, bookingReference);
 
             const subject = 'Booking Confirmation';
-            const message = `Dear user, your booking for room ${roomId} was confirmed.`;
+            const message = `Dear user, your booking for room ${roomId} was confirmed. Your booking reference is ${bookingReference}.`;
+
             const params = {
                 Message: message,
                 Subject: subject,
@@ -66,12 +68,18 @@ exports.handler = async (event) => {
 const checkRoomBooking = async (roomId) => {
     const params = {
         TableName: tableName,
-        Key: { id: roomId }
+        FilterExpression: '#id = :roomId',
+        ExpressionAttributeNames: {
+            '#id': 'id'
+        },
+        ExpressionAttributeValues: {
+            ':roomId': roomId
+        }
     };
 
     try {
-        const result = await dynamoDb.get(params).promise();
-        return result.Item !== undefined;
+        const result = await dynamoDb.scan(params).promise();
+        return result.Items.length > 0;
     } catch (error) {
         console.error(`Error checking room booking: ${error}`);
         return false;
@@ -81,7 +89,7 @@ const checkRoomBooking = async (roomId) => {
 const saveRoomBooking = async (email, roomId, bookingReference) => {
     const params = {
         TableName: tableName,
-        Item: { id: roomId, email, bookingReference, timestamp: new Date().toISOString() }
+        Item: { bookingReference, id: roomId, email, timestamp: new Date().toISOString() }
     };
 
     try {
