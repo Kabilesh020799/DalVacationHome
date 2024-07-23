@@ -8,6 +8,7 @@ import Login from "../containers/authentication/login/Login";
 import Tickets from "../containers/tickets"
 import Feedback from "../containers/feedback"
 import RoomDetail from "../containers/room-detail";
+import MyBookings from "../containers/my-bookings";
 const routes = [
   {
     id: 'signup',
@@ -62,7 +63,7 @@ const routes = [
   {
     id: 'my-bookings',
     route: '/my-bookings',
-    component: <div></div>,
+    component: <MyBookings />,
   }
 ];
 
