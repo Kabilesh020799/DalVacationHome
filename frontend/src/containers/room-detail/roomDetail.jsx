@@ -1,13 +1,11 @@
-import React, { useEffect } from 'react';
-import { useLocation, useSearchParams } from 'react-router-dom';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import Box from '@mui/material/Box';
+import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { Box, Container, Typography, Button, Chip, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { rooms } from '../home/constants';
-import { Button, Chip } from '@mui/material';
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
@@ -17,6 +15,19 @@ const RoomDetail = () => {
   const query = useQuery();
   const roomId = query.get('roomId');
   const room = rooms.find((room) => room?.id == roomId) || {};
+  
+  const [open, setOpen] = useState(false);
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
+  const [guests, setGuests] = useState(1);
+console.log(fromDate, toDate);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   return (
     <div>
@@ -41,7 +52,7 @@ const RoomDetail = () => {
             <Typography gutterBottom variant="h4" component="div">
               {room.name}
             </Typography>
-            <Button variant="contained" color="primary">
+            <Button variant="contained" color="primary" onClick={handleClickOpen}>
               Book Now
             </Button>
           </Box>
@@ -61,6 +72,42 @@ const RoomDetail = () => {
           </div>
         </Box>
       </Container>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Book {room.name}</DialogTitle>
+        <DialogContent>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              label="From Date"
+              value={fromDate}
+              onChange={(newValue) => setFromDate(newValue)}
+              renderInput={(params) => <TextField {...params} fullWidth margin="dense" />}
+            />
+            <DatePicker
+              label="To Date"
+              sx={{ marginLeft: '20px', marginBottom: '20px' }}
+              value={toDate}
+              onChange={(newValue) => setToDate(newValue)}
+              renderInput={(params) => <TextField {...params} fullWidth margin="dense" />}
+            />
+          </LocalizationProvider>
+          <TextField
+            label="Number of Guests"
+            type="number"
+            value={guests}
+            onChange={(e) => setGuests(e.target.value)}
+            fullWidth
+            margin="dense"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleClose} color="primary">
+            Confirm Booking
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
