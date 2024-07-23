@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Container, Typography, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button } from '@mui/material';
 import NavBar from '../navbar/navbar';
 
 const sampleBookings = [
@@ -58,6 +58,10 @@ const MyBookings = () => {
                   <TableCell>{new Date(booking.fromDate).toLocaleDateString()}</TableCell>
                   <TableCell>{new Date(booking.toDate).toLocaleDateString()}</TableCell>
                   <TableCell>{booking.guests}</TableCell>
+                  <TableCell>
+                    <Button variant='contained' style={{ outline: 'none' }}>View</Button>
+                    <Button variant='outlined' color='error' style={{ marginLeft: '20px', outline: 'none' }}>Cancel Booking</Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
