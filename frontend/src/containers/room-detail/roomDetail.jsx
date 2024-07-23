@@ -6,6 +6,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { rooms } from '../home/constants';
+import NavBar from '../navbar/navbar';
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
@@ -20,7 +21,6 @@ const RoomDetail = () => {
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
   const [guests, setGuests] = useState(1);
-console.log(fromDate, toDate);
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -31,6 +31,7 @@ console.log(fromDate, toDate);
 
   return (
     <div>
+      <NavBar />
       <Box
         component="img"
         sx={{

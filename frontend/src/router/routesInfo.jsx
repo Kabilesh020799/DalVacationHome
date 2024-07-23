@@ -63,6 +63,11 @@ const routes = [
     id: 'room',
     route: '/room',
     component: <RoomDetail />
+  },
+  {
+    id: 'my-bookings',
+    route: '/my-bookings',
+    component: <div></div>,
   }
 ];
 
