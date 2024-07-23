@@ -4,9 +4,9 @@ import { Box, Container, Typography, Button, Chip, Dialog, DialogTitle, DialogCo
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { rooms } from '../home/constants';
 import NavBar from '../navbar/navbar';
+import { confirmBooking } from './apiUtils';
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
@@ -16,6 +16,7 @@ const RoomDetail = () => {
   const query = useQuery();
   const roomId = query.get('roomId');
   const room = rooms.find((room) => room?.id == roomId) || {};
+  const email = localStorage.getItem("email");
   
   const [open, setOpen] = useState(false);
   const [fromDate, setFromDate] = useState(null);
@@ -29,9 +30,18 @@ const RoomDetail = () => {
     setOpen(false);
   };
 
+  const handleConfirm = () => {
+    confirmBooking({
+      email,
+      roomId,
+      fromDate,
+      toDate,
+    })
+    setOpen(false);
+  }
+
   return (
     <div>
-      <NavBar />
       <Box
         component="img"
         sx={{
@@ -104,7 +114,7 @@ const RoomDetail = () => {
           <Button onClick={handleClose} color="secondary">
             Cancel
           </Button>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={handleConfirm} color="primary">
             Confirm Booking
           </Button>
         </DialogActions>
