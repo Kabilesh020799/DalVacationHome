@@ -21,16 +21,18 @@ exports.handler = async (event) => {
     };
 
     try {
-        await sns.subscribe(params).promise();
+        const data = await sns.subscribe(params).promise();
+        console.log(`Subscription ARN is ${data.SubscriptionArn}`);
+
         return {
             statusCode: 200,
-            body: JSON.stringify({ message: 'Subscription successful', email: email })
+            body: JSON.stringify({ message: 'Subscription successful', email: email, subscriptionArn: data.SubscriptionArn })
         };
     } catch (error) {
         console.error('Error subscribing email:', error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ message: 'Error subscribing email', error })
+            body: JSON.stringify({ message: 'Error subscribing email', error: error.message })
         };
     }
 };
