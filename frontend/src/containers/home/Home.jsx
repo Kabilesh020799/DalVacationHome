@@ -11,7 +11,7 @@ const Home = () => {
   const navigate = useNavigate();
 
   const onClickCard = (id) => {
-    navigate('/room?roomId=' + id);  
+    navigate('/room/?roomId=' + id);  
   };
 
   return (

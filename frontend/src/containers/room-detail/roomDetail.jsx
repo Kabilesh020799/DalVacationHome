@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import { rooms } from '../home/constants';
-import { Button } from '@mui/material';
+import { Button, Chip } from '@mui/material';
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
@@ -46,8 +46,19 @@ const RoomDetail = () => {
             </Button>
           </Box>
           <Typography variant="body1" color="text.secondary" sx={{ mt: 2 }}>
-            Number of beds: {room.beds}
+            {room?.description}
           </Typography>
+          <Typography variant="body1" color="text.secondary" sx={{ mt: 2 }}>
+            <b>Number of beds:</b> {room.beds}
+          </Typography>
+          <Typography variant="body1" color="text.secondary" sx={{ mt: 2 }}>
+            <b>Price:</b> {room.price}
+          </Typography>
+          <div style={{ display:'flex', gap: '15px', marginTop: '20px' }}>
+            {
+              room?.amenities?.map((amenity) => <Chip key={amenity} label={amenity} color="primary" variant="outlined" />)
+            }
+          </div>
         </Box>
       </Container>
     </div>
