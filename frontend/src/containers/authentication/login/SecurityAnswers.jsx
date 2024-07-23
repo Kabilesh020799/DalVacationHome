@@ -49,18 +49,36 @@ const SecurityAnswers = () => {
           caesarCipherAnswer: form.caesarCipherAnswer
         });
 
-        if (response.data.body === '"Verification successful"') {
-          alert('Security Questions and Caesar Cipher Verified Successfully!');
-          navigate('/home');
-        } else {
-          alert(JSON.stringify(response.data));
+          console.log("Response from API:", response.data);
+
+          let responseBody;
+          try {
+            responseBody = JSON.parse(response.data.body);
+          } catch (parseError) {
+            console.error('Error parsing response body:', parseError);
+            alert('Error parsing response from server.');
+            return;
+          }
+  
+          console.log("Parsed response body:", responseBody);
+  
+          if (responseBody.message === 'Verification successful') {
+
+            localStorage.setItem('userType', responseBody.userType);
+            localStorage.setItem('user_id', responseBody.user_id);
+            localStorage.setItem('token', responseBody.token); 
+
+            alert('Security Questions and Caesar Cipher Verified Successfully!');
+            navigate('/home', { state: { email, userType: responseBody.userType, user_id: responseBody.user_id } });
+          } else {
+            alert(responseBody.message || 'Verification failed.');
+          }
+        } catch (error) {
+          console.error('An error occurred during verification:', error);
+          alert('An error occurred during verification. Please try again.');
         }
-      } catch (error) {
-        console.log(error.message);
-        alert('An error occurred during verification. Please try again.');
       }
-    }
-  };
+    };
 
   const validate = () => {
     let formErrors = {};

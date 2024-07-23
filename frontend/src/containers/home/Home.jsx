@@ -15,10 +15,23 @@ const Home = () => {
   const onClickCard = (id) => {
     navigate('/room/?roomId=' + id);  
   };
+  useEffect(() => {
+    const checkUser = async () => {
+      try {
+        await getCurrentUser();
+        setIsLoggedIn(true);
+      } catch {
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkUser();
+  }, []);
 
   const handleSignOut = async () => {
     try {
       await signOut();
+      localStorage.clear();
       setIsLoggedIn(false);
     } catch (error) {
       console.log('Error signing out: ', error);
