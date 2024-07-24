@@ -10,15 +10,12 @@ const ChatBot = () => {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    // Load existing chat data from local storage on component mount
     const storedChatData = JSON.parse(localStorage.getItem("chatData")) || [];
     setChatData(storedChatData);
-    // TODO remove this
     localStorage.setItem("email", "test@gmail.com");
   }, []);
 
   useEffect(() => {
-    // Scroll to the bottom of the chat messages container
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatData]);
 
@@ -48,7 +45,6 @@ const ChatBot = () => {
       requestText = requestText + ":" + localStorage.getItem("email");
     }
 
-    // Make POST API call to backend
     try {
       const response = await axios.post(
         "https://xalxtayttk.execute-api.us-east-1.amazonaws.com/prod/recognize",
@@ -60,10 +56,8 @@ const ChatBot = () => {
         }
       );
       const responseData = response.data;
-      console.log(responseData);
       const timestamp = new Date().toLocaleTimeString();
 
-      // Update chat data
       const updatedChat = [
         ...chatData,
         { message: inputText.trim(), fromUser: true, time: timestamp },
@@ -71,11 +65,7 @@ const ChatBot = () => {
       ];
 
       setChatData(updatedChat);
-
-      // Save updated chat data to local storage
       localStorage.setItem("chatData", JSON.stringify(updatedChat));
-
-      // Clear input
       setInputText("");
     } catch (error) {
       console.error("Error sending message:", error);
@@ -109,7 +99,11 @@ const ChatBot = () => {
                 {chat.fromUser ? "User" : "Bot"}
               </span>
               <div className={`chat-content ${chat.fromUser ? "user" : "bot"}`}>
-                {chat.message}
+                {chat.fromUser ? (
+                  chat.message
+                ) : (
+                  <span dangerouslySetInnerHTML={{ __html: chat.message }} />
+                )}
               </div>
               <span className="chat-time">{chat.time}</span>
             </div>
