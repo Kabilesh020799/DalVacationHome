@@ -29,22 +29,22 @@ console.log(bookings);
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Booking ID</TableCell>
-                <TableCell>Room Name</TableCell>
-                <TableCell>From Date</TableCell>
-                <TableCell>To Date</TableCell>
-                <TableCell>Number of Guests</TableCell>
-                <TableCell>Status</TableCell>
+                <TableCell style={{ fontWeight: 'bold' }}>Booking ID</TableCell>
+                <TableCell style={{ fontWeight: 'bold' }}>Room Name</TableCell>
+                <TableCell style={{ fontWeight: 'bold' }}>From Date</TableCell>
+                <TableCell style={{ fontWeight: 'bold' }}>To Date</TableCell>
+                <TableCell style={{ fontWeight: 'bold' }}>Number of Guests</TableCell>
+                <TableCell style={{ fontWeight: 'bold' }}>Status</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {bookings.map((booking) => (
                 <TableRow key={booking.bookingReference}>
-                  <TableCell>{booking.bookingReference}</TableCell>
-                  <TableCell>{booking.name}</TableCell>
-                  <TableCell>{new Date(booking.fromDate).toLocaleDateString()}</TableCell>
-                  <TableCell>{new Date(booking.toDate).toLocaleDateString()}</TableCell>
-                  <TableCell>{booking.guests}</TableCell>
+                  <TableCell>{booking.bookingReference || '-'}</TableCell>
+                  <TableCell>{booking.name || '-'}</TableCell>
+                  <TableCell>{new Date(booking.fromDate).toLocaleDateString() || '-'}</TableCell>
+                  <TableCell>{new Date(booking.toDate).toLocaleDateString() || '-'}</TableCell>
+                  <TableCell>{booking.guests || '-'}</TableCell>
                   <TableCell>
                     {booking.status === 'failed' ? (
                       <Chip variant="outlined" color="error" label={booking.status} />
