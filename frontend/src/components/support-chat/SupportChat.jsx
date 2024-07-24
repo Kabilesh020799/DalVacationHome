@@ -21,46 +21,68 @@ function SupportChat({ ticketId, handleChatClose }) {
     (chat) => chat.ticketId === ticketId
   );
 
+  const handleInputChange = (e) => {
+    setInputMessage(e.target.value);
+  };
+
   const closeChatWindow = (e) => {
     e.preventDefault();
     setInputMessage("");
     handleChatClose();
   };
 
+  const handleKeyDown = (e) => {
+    console.log("key down");
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
+
   const handleSubmit = (e) => {
-    e.preventDefault();
     setInputMessage("");
     ongoingChats.sendMessage(inputMessage, currentChat, ongoingChats.userId);
   };
 
   return (
-    <div className="chat-window">
-      <div className="chat-nav">
-        <button className="close-button" onClick={closeChatWindow}>
-          Close
+    <div className="chatbot-container">
+      <div className="chat-header">
+        <button className="close-button-bot" onClick={closeChatWindow}>
+          X
         </button>
       </div>
-      <div className="chat-content">
-        {currentChat.messages.map((ch, index) => {
-          return (
+      <div className="chat-messages-support">
+        {currentChat.messages.map((chat, index) => (
+          <div
+            key={index}
+            className={`chat-message ${
+              chat.from === ongoingChats.userId ? "user" : "bot"
+            }`}
+          >
+            <span className="chat-sender">{chat.from}</span>
             <div
-              className={
-                ch.from === ongoingChats.userId
-                  ? "content-right"
-                  : "content-left"
-              }
-              key={ch.message}
+              className={`chat-content ${
+                chat.from === ongoingChats.userId ? "user" : "bot"
+              }`}
             >
-              {ch.message}
+              {chat.from === ongoingChats.userId ? (
+                chat.message
+              ) : (
+                <span dangerouslySetInnerHTML={{ __html: chat.message }} />
+              )}
             </div>
-          );
-        })}
+            <span className="chat-time">{new Date().toLocaleTimeString()}</span>
+          </div>
+        ))}
       </div>
       <div className="chat-input">
         <input
-          onChange={(e) => setInputMessage(e.currentTarget.value)}
+          type="text"
           value={inputMessage}
-        ></input>
+          onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
+          placeholder="Type your message..."
+        />
         <button onClick={handleSubmit}>Send</button>
       </div>
     </div>

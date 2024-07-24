@@ -12,7 +12,8 @@ import { doc, or, setDoc } from "firebase/firestore";
 const ChatContext = createContext(null);
 
 function ChatProvider({ children }) {
-  const userId = "test@gmail.com"; // Fetch from auth
+  const userId = "raj@gmail.com"; // Fetch from auth
+  const userType = "CUSTOMER";
   const [chats, setChats] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -36,7 +37,7 @@ function ChatProvider({ children }) {
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [userId, userType]);
 
   const sendMessage = async (inputMessage, currentChat, userId) => {
     const to =
@@ -90,6 +91,7 @@ function ChatProvider({ children }) {
         chats: chats,
         loading: loading,
         userId: userId,
+        userType: userType,
         sendMessage: sendMessage,
         markAsRead: markAsRead,
       }}

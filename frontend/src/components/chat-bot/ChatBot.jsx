@@ -10,13 +10,17 @@ const ChatBot = () => {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    // Load existing chat data from local storage on component mount
+    // clear this storage on logout
     const storedChatData = JSON.parse(localStorage.getItem("chatData")) || [];
     setChatData(storedChatData);
+    //remove after auth integration
+    localStorage.setItem(
+      "token",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJhakBnbWFpbC5jb20iLCJ1c2VyVHlwZSI6IkFHRU5UIiwiZXhwIjoxNzIxODU3MTY0fQ.c2sGGbGqnIt-hA_dYxEMpw7vOIb_3vxt40tyFVY5T2k"
+    );
   }, []);
 
   useEffect(() => {
-    // Scroll to the bottom of the chat messages container
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatData]);
 
@@ -38,15 +42,25 @@ const ChatBot = () => {
     setLoading(true);
 
     let requestText = inputText.trim();
-    let sessionId = localStorage.getItem("email").replace(/[^a-zA-Z0-9]/g, "");
+    let token = localStorage.getItem("token");
+    let sessionId = "";
+    if (token !== undefined && token !== null && token !== "") {
+      sessionId = token.replace(/[^a-zA-Z0-9]/g, "").substring(0, 5);
+    } else {
+      token = "";
+    }
+
     if (
       inputText.trim().toLowerCase() === "yes" ||
       inputText.trim().toLowerCase() === "no"
     ) {
-      requestText = requestText + ":" + localStorage.getItem("email");
+      requestText = requestText + ":" + token;
     }
 
-    // Make POST API call to backend
+    if (sessionId === "") {
+      sessionId = "xalxtayttk";
+    }
+
     try {
       const response = await axios.post(
         "https://xalxtayttk.execute-api.us-east-1.amazonaws.com/prod/recognize",
@@ -58,10 +72,8 @@ const ChatBot = () => {
         }
       );
       const responseData = response.data;
-      console.log(responseData);
       const timestamp = new Date().toLocaleTimeString();
 
-      // Update chat data
       const updatedChat = [
         ...chatData,
         { message: inputText.trim(), fromUser: true, time: timestamp },
@@ -69,11 +81,7 @@ const ChatBot = () => {
       ];
 
       setChatData(updatedChat);
-
-      // Save updated chat data to local storage
       localStorage.setItem("chatData", JSON.stringify(updatedChat));
-
-      // Clear input
       setInputText("");
     } catch (error) {
       console.error("Error sending message:", error);
@@ -107,7 +115,11 @@ const ChatBot = () => {
                 {chat.fromUser ? "User" : "Bot"}
               </span>
               <div className={`chat-content ${chat.fromUser ? "user" : "bot"}`}>
-                {chat.message}
+                {chat.fromUser ? (
+                  chat.message
+                ) : (
+                  <span dangerouslySetInnerHTML={{ __html: chat.message }} />
+                )}
               </div>
               <span className="chat-time">{chat.time}</span>
             </div>
