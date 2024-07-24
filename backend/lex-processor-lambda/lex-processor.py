@@ -4,6 +4,7 @@ from botocore.exceptions import ClientError
 import logging
 import uuid
 import requests
+from datetime import datetime
 
 
 logger = logging.getLogger()
@@ -12,6 +13,7 @@ logger.setLevel("INFO")
 def generate_ticket_id():
     return str(uuid.uuid4())
 
+# Function to create a ticket with random support agent.
 def create_ticket(customerId):
     ticket_id = generate_ticket_id()
     url = 'https://us-central1-sample-311412.cloudfunctions.net/publishMessagesToPubSub'
@@ -27,6 +29,7 @@ def create_ticket(customerId):
     logger.info(response)
     return ticket_id
 
+# Function to raise support ticket.
 def raise_support_ticket(intent_request):
     session_attributes = get_session_attributes(intent_request)
     input_text = get_slot(intent_request, 'choice')
@@ -56,29 +59,43 @@ def raise_support_ticket(intent_request):
     fulfillment_state = "Fulfilled"
     return close(intent_request, session_attributes, fulfillment_state, message)
 
+def format_date(date_str):
+    dt = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+    return dt.strftime('%B %d, %Y')
+
 # Function to actually fetch the data.
-def fetch_data_dynamo(booking_ref_number):
-    dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table('booking')
-
+def fetch_booking_data(booking_ref_number):
+    logger.info('booking ref' + booking_ref_number)
+    url = 'https://e5yan0pq7h.execute-api.us-east-1.amazonaws.com/dev/get-bookings'
+    headers = {
+        'Content-Type': 'application/json'
+    }
+    data = {
+        'bookingReference': booking_ref_number
+    }
+    response = requests.post(url, headers=headers, data=json.dumps(data))
     try:
-        response = table.get_item(
-            Key={
-                'booking-reference-number': booking_ref_number
-            }
-        )
-        logger.info(response)
+        response_data = response.json()
+        body_data = json.loads(response_data['body'])
+    except (json.JSONDecodeError, KeyError) as e:
+        logger.error(f'Error parsing response: {e}')
+        return None
+    
+    if response_data.get("statusCode") == 404:
+        return body_data.get("message", "Booking not found")
+    
+    from_date = format_date(body_data['fromDate'])
+    to_date = format_date(body_data['toDate'])
+    booking_date = format_date(body_data['timestamp'])
+    status = body_data['status']
 
-        # TODO format response as per booking data.
-        if 'Item' in response:
-            return response['Item']['bookingStatus']
-        else:
-            return 'No Booking with Reference#' + booking_ref_number
+    formatted_response = f"""From: {from_date}<br>
+To: {to_date}<br>
+Status: {status}<br>
+Booking Date: {booking_date}"""
 
-    except ClientError as e:
-        # Handle error
-        logger.info(ClientError)
-        return 'Error fetching booking data. Try after some time.'
+    logger.info(formatted_response)
+    return formatted_response
 
 def get_slots(intent_request):
     return intent_request['sessionState']['intent']['slots']
@@ -117,7 +134,7 @@ def fetch_booking_info(intent_request):
     booking_ref_number = get_slot(intent_request, 'booking-reference-number')
 
     #Fetch booking data from DynamoDB
-    text = 'Room is booked' #fetch_data_dynamo(booking_ref_number)
+    text = fetch_booking_data(booking_ref_number)
     message =  {
             'contentType': 'PlainText',
             'content': text
