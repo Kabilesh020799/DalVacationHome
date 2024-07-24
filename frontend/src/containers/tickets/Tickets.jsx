@@ -24,7 +24,7 @@ const Tickets = () => {
           { userId: userId, userType: userType },
           {
             headers: {
-              "Content-Type": "application/json"
+              "Content-Type": "application/json",
             },
           }
         );
@@ -44,16 +44,15 @@ const Tickets = () => {
   }, [userId]);
 
   const handleCloseTicket = async (ticketId) => {
-    console.log('close ticket button clicked')
+    console.log("close ticket button clicked");
     try {
-
       // Find the ticket with the given ID
       const ticket = tickets.find((ticket) => ticket.ticketId === ticketId);
-            
+
       // Check if the ticket is already closed
       if (ticket && ticket.status === "closed") {
-          alert('Ticket is already closed.');
-          return; // Exit the function if the ticket is already closed
+        alert("Ticket is already closed.");
+        return; // Exit the function if the ticket is already closed
       }
 
       const response = await axios.post(
@@ -61,7 +60,7 @@ const Tickets = () => {
         { ticketId },
         {
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
           },
         }
       );
@@ -117,10 +116,14 @@ const Tickets = () => {
                 <p>
                   <strong>Status:</strong> {ticket.status}
                 </p>
-                <button
-                  onClick={() => handleCloseTicket(ticket.ticketId)}
-                  className="close-button"
-                >Close Ticket</button>
+                {ticket.status !== "closed" && (
+                  <button
+                    onClick={() => handleCloseTicket(ticket.ticketId)}
+                    className="close-button"
+                  >
+                    Close Ticket
+                  </button>
+                )}
                 <br></br>
                 <br></br>
                 {ticket.status !== "closed" && (
@@ -141,7 +144,6 @@ const Tickets = () => {
               handleChatClose={handleChatClose}
             />
           )}
-          {/* <ChatBot /> */}
         </div>
       )}
     </div>
