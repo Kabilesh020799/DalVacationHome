@@ -1,20 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import "./style.scss";
 import SupportChat from "../../components/support-chat/SupportChat";
-import ChatBot from "../../components/chat-bot/ChatBot";
-//request access to server: https://cors-anywhere.herokuapp.com/
+import { ChatContext } from "../../components/support-chat/ChatProvider";
 
 const Tickets = () => {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [ticketId, setTicketId] = useState("");
   const [showChat, setShowChat] = useState(false);
+  const chatContext = useContext(ChatContext);
 
-  localStorage.setItem("userId", "test@gmail.com"); //TODO: do this in login page
-  localStorage.setItem("userType", "CUSTOMER"); //TODO: do this in login page
-  const userId = localStorage.getItem("userId");
-  const userType = localStorage.getItem("userType");
+  const userId = chatContext.userId;
+  const userType = chatContext.userType;
 
   useEffect(() => {
     const fetchTickets = async () => {
@@ -41,7 +39,7 @@ const Tickets = () => {
     };
 
     fetchTickets();
-  }, [userId]);
+  }, [userId, userType]);
 
   const handleCloseTicket = async (ticketId) => {
     console.log("close ticket button clicked");

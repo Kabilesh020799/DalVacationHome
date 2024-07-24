@@ -10,9 +10,14 @@ const ChatBot = () => {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
+    // clear this storage on logout
     const storedChatData = JSON.parse(localStorage.getItem("chatData")) || [];
     setChatData(storedChatData);
-    localStorage.setItem("email", "test@gmail.com");
+    //remove after auth integration
+    localStorage.setItem(
+      "token",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJhakBnbWFpbC5jb20iLCJ1c2VyVHlwZSI6IkFHRU5UIiwiZXhwIjoxNzIxODU3MTY0fQ.c2sGGbGqnIt-hA_dYxEMpw7vOIb_3vxt40tyFVY5T2k"
+    );
   }, []);
 
   useEffect(() => {
@@ -37,12 +42,23 @@ const ChatBot = () => {
     setLoading(true);
 
     let requestText = inputText.trim();
-    let sessionId = localStorage.getItem("email").replace(/[^a-zA-Z0-9]/g, "");
+    let token = localStorage.getItem("token");
+    let sessionId = "";
+    if (token !== undefined && token !== null && token !== "") {
+      sessionId = token.replace(/[^a-zA-Z0-9]/g, "").substring(0, 5);
+    } else {
+      token = "";
+    }
+
     if (
       inputText.trim().toLowerCase() === "yes" ||
       inputText.trim().toLowerCase() === "no"
     ) {
-      requestText = requestText + ":" + localStorage.getItem("email");
+      requestText = requestText + ":" + token;
+    }
+
+    if (sessionId === "") {
+      sessionId = "xalxtayttk";
     }
 
     try {
