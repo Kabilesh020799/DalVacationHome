@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button } from '@mui/material';
+import { Container, Typography, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Chip } from '@mui/material';
 import { getBookings } from './apiUtils';
 import { rooms } from '../home/constants';
 import { useNavigate } from 'react-router-dom';
@@ -34,6 +34,7 @@ console.log(bookings);
                 <TableCell>From Date</TableCell>
                 <TableCell>To Date</TableCell>
                 <TableCell>Number of Guests</TableCell>
+                <TableCell>Status</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -44,6 +45,13 @@ console.log(bookings);
                   <TableCell>{new Date(booking.fromDate).toLocaleDateString()}</TableCell>
                   <TableCell>{new Date(booking.toDate).toLocaleDateString()}</TableCell>
                   <TableCell>{booking.guests}</TableCell>
+                  <TableCell>
+                    {booking.status === 'failed' ? (
+                      <Chip variant="outlined" color="error" label={booking.status} />
+                    ) : (
+                      <Chip variant="outlined" color="success" label={booking.status} />
+                    )}
+                  </TableCell>
                   <TableCell>
                     <Button variant='contained' onClick={() => navigate(`/room/?roomId=${booking.id}`)} style={{ outline: 'none' }}>View</Button>
                     <Button variant='outlined' color='error' style={{ marginLeft: '20px', outline: 'none' }}>Cancel Booking</Button>
