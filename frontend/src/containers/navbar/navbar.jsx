@@ -22,15 +22,14 @@ export default function NavBar({ isLoggedIn, handleSignOut }) {
             aria-label="menu"
             sx={{ color: 'white', mr: 2 }}
           >
-            <MenuIcon />
           </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: 'white' }}>
+          <Typography variant="h6" component="div" onClick={() => navigate('/home')} sx={{ flexGrow: 1, color: 'white', cursor: 'pointer' }}>
             DalVacation Home
           </Typography>
           
           {isLoggedIn ? (
             <>
-              <Typography variant="body1" onClick={() => navigate('/my-bookings')} sx={{ marginLeft: '20px', cursor: 'pointer' }}>
+              <Typography variant="body1" onClick={() => navigate('/my-bookings')} sx={{ marginLeft: '20px', cursor: 'pointer', color: 'white' }}>
                 My Bookings
               </Typography>
               <Button color="inherit" sx={{ color: 'white' }} onClick={handleSignOut}>SignOut</Button>

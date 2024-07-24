@@ -5,7 +5,6 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { rooms } from '../home/constants';
-import NavBar from '../navbar/navbar';
 import { confirmBooking } from './apiUtils';
 
 const useQuery = () => {
@@ -36,6 +35,7 @@ const RoomDetail = () => {
       roomId,
       fromDate,
       toDate,
+      guests,
     })
     setOpen(false);
   }

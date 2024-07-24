@@ -1,38 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Typography, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button } from '@mui/material';
-import NavBar from '../navbar/navbar';
-
-const sampleBookings = [
-  {
-    id: '1',
-    roomName: 'Deluxe Room',
-    fromDate: '2023-08-01T00:00:00Z',
-    toDate: '2023-08-05T00:00:00Z',
-    guests: 2,
-  },
-  {
-    id: '2',
-    roomName: 'Executive Room',
-    fromDate: '2023-09-10T00:00:00Z',
-    toDate: '2023-09-15T00:00:00Z',
-    guests: 3,
-  },
-  {
-    id: '3',
-    roomName: 'Suite',
-    fromDate: '2023-10-01T00:00:00Z',
-    toDate: '2023-10-07T00:00:00Z',
-    guests: 4,
-  },
-];
+import { getBookings } from './apiUtils';
+import { rooms } from '../home/constants';
+import { useNavigate } from 'react-router-dom';
 
 const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
+  const navigate = useNavigate();
+
+  const email = localStorage.getItem('email');
 
   useEffect(() => {
-    setBookings(sampleBookings);
+    const getData = async() => {
+      const res = await getBookings({ email });
+      const finalRes = res?.map((resItem) => ({ ...resItem, ...rooms?.find((room) => room.id == resItem.id) }));
+      setBookings(finalRes);
+    }
+    getData();
   }, []);
-
+console.log(bookings);
   return (
     <Container>
       <Box sx={{ my: 4 }}>
@@ -52,14 +38,14 @@ const MyBookings = () => {
             </TableHead>
             <TableBody>
               {bookings.map((booking) => (
-                <TableRow key={booking.id}>
-                  <TableCell>{booking.id}</TableCell>
-                  <TableCell>{booking.roomName}</TableCell>
+                <TableRow key={booking.bookingReference}>
+                  <TableCell>{booking.bookingReference}</TableCell>
+                  <TableCell>{booking.name}</TableCell>
                   <TableCell>{new Date(booking.fromDate).toLocaleDateString()}</TableCell>
                   <TableCell>{new Date(booking.toDate).toLocaleDateString()}</TableCell>
                   <TableCell>{booking.guests}</TableCell>
                   <TableCell>
-                    <Button variant='contained' style={{ outline: 'none' }}>View</Button>
+                    <Button variant='contained' onClick={() => navigate(`/room/?roomId=${booking.id}`)} style={{ outline: 'none' }}>View</Button>
                     <Button variant='outlined' color='error' style={{ marginLeft: '20px', outline: 'none' }}>Cancel Booking</Button>
                   </TableCell>
                 </TableRow>

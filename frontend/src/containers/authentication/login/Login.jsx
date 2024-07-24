@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Container, TextField, Button, Typography, Box, Grid } from '@mui/material';
 import { signIn } from 'aws-amplify/auth';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Login = () => {
   const [form, setForm] = useState({
@@ -119,6 +119,9 @@ const Login = () => {
             >
               Sign In
             </Button>
+            <Typography variant="body2" color="textSecondary" align="center">
+              Already have an account? <Link component={Link} to="/signup">Sign up</Link>
+            </Typography>
             {/* <Typography variant="body2" color="textSecondary" align="center">
               <Link component="button" onClick={handleForgotPassword}>
                 Forgot password?
