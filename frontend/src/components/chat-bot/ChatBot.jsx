@@ -13,8 +13,6 @@ const ChatBot = () => {
     // Load existing chat data from local storage on component mount
     const storedChatData = JSON.parse(localStorage.getItem("chatData")) || [];
     setChatData(storedChatData);
-    // TODO remove this
-    localStorage.setItem("email", "test@gmail.com");
   }, []);
 
   useEffect(() => {

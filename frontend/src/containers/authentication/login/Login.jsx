@@ -19,6 +19,7 @@ const Login = () => {
       try {
         const res = await signIn({ username: form.email, password: form.password });
         localStorage.setItem("email", form.email);
+        console.log(form?.email)
         navigate('/securityanswers', { state: { email: form.email } });
       } catch (error) {
         setSignInError(error.message);

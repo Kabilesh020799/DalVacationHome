@@ -55,7 +55,6 @@ const Home = () => {
 
   return (
     <div className="home">
-      <NavBar isLoggedIn={isLoggedIn} handleSignOut={handleSignOut} />
       <Grid container spacing={2} className="home-cards">
         {rooms.map((room, index) => (
           <Grid item xs={12} sm={6} md={4} key={index} onClick={() => onClickCard(room?.id)}>
