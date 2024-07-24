@@ -9,14 +9,14 @@ const tableName = 'bookings';
 exports.handler = async (event) => {
     for (const record of event.Records) {
         const messageBody = JSON.parse(record.body);
-        const { email, roomId, fromDate, toDate } = messageBody;
+        const { email, roomId, fromDate, toDate, guests } = messageBody;
 
         const bookingReference = uuidv4();
 
         const bookingExists = await checkRoomBooking(roomId);
 
         if (!bookingExists) {
-            await saveRoomBooking(email, roomId, bookingReference, fromDate, toDate, "confirmed");
+            await saveRoomBooking(email, roomId, bookingReference, fromDate, toDate, "confirmed", guests);
 
             const subject = 'Booking Confirmation';
             const message = `Dear user, your booking for room ${roomId} was confirmed. Your booking reference is ${bookingReference}.`;
@@ -40,7 +40,7 @@ exports.handler = async (event) => {
                 console.error(`Error sending message to ${email}`, error);
             }
         } else {
-            await saveRoomBooking(email, roomId, bookingReference, fromDate, toDate, "failed");
+            await saveRoomBooking(email, roomId, bookingReference, fromDate, toDate, "failed", guests);
             const subject = 'Booking Failure';
             const message = `Dear user, your booking for room ${roomId} failed as it was already booked.`;
 
@@ -87,10 +87,10 @@ const checkRoomBooking = async (roomId) => {
     }
 };
 
-const saveRoomBooking = async (email, roomId, bookingReference, fromDate, toDate, status) => {
+const saveRoomBooking = async (email, roomId, bookingReference, fromDate, toDate, status, guests) => {
     const params = {
         TableName: tableName,
-        Item: { bookingReference, id: roomId, email, timestamp: new Date().toISOString(), fromDate, toDate, status }
+        Item: { bookingReference, id: roomId, email, timestamp: new Date().toISOString(), fromDate, toDate, status, guests }
     };
 
     try {
