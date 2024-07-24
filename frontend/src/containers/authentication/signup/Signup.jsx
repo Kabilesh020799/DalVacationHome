@@ -138,8 +138,8 @@ const onChange = (e) => {
               Submit
             </Button>
             <Typography variant="body2" color="textSecondary" align="center">
-            Already have an account? <Link component={Link} to="/login">Login</Link>
-          </Typography>
+              Already have an account? <Link component={Link} to="/login">Login</Link>
+            </Typography>
           </Box>
         ) : (
                <Box component="form" onSubmit={onVerifyOtp} sx={{ mt: 3 }}>

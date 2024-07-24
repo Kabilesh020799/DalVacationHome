@@ -6,8 +6,11 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
+import { useNavigate } from 'react-router-dom';
 
 export default function NavBar({ isLoggedIn, handleSignOut }) {
+  const navigate = useNavigate();
+  
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -19,17 +22,26 @@ export default function NavBar({ isLoggedIn, handleSignOut }) {
             aria-label="menu"
             sx={{ color: 'white', mr: 2 }}
           >
-            <MenuIcon />
           </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: 'white' }}>
+          <Typography variant="h6" component="div" onClick={() => navigate('/home')} sx={{ flexGrow: 1, color: 'white', cursor: 'pointer' }}>
             DalVacation Home
           </Typography>
+          
           {isLoggedIn ? (
-            <Button color="inherit" sx={{ color: 'white' }} onClick={handleSignOut}>SignOut</Button>
+            <>
+              <Typography variant="body1" onClick={() => navigate('/my-bookings')} sx={{ marginLeft: '20px', cursor: 'pointer', color: 'white' }}>
+                My Bookings
+              </Typography>
+              <Button color="inherit" sx={{ color: 'white' }} onClick={handleSignOut}>SignOut</Button>
+            </>
           ) : (
             <>
-              <Button color="inherit" sx={{ color: 'white' }} href="/login">Login</Button>
-              <Button color="inherit" sx={{ color: 'white' }} href="/signup">SignUp</Button>
+              <Typography variant="body1" onClick={() => navigate('/login')} sx={{ marginLeft: '20px', cursor: 'pointer' }}>
+                Login
+              </Typography>
+              <Typography variant="body1" onClick={() => navigate('/signup')} sx={{ marginLeft: '20px', cursor: 'pointer' }}>
+                Sign Up
+              </Typography>
             </>
           )}
         </Toolbar>

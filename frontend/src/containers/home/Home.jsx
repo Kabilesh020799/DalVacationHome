@@ -1,71 +1,71 @@
 import React, { useState, useEffect } from "react";
 import ChatBot from "../../components/chat-bot/ChatBot";
 import NavBar from "../navbar/navbar";
+import RoomCard from "../../components/card";
+import { rooms } from "./constants";
+import './style.scss';
+import Grid from "@mui/material/Grid";
 import { signOut, getCurrentUser } from 'aws-amplify/auth';
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  async function currentAuthenticatedUser() {
-    try {
-      const { username, userId, signInDetails } = await getCurrentUser();
-      console.log(`The username: ${username}`);
-      console.log(`The userId: ${userId}`);
-      console.log(`The signInDetails: ${signInDetails}`);
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-    useEffect(() => {
-    const checkUser = async function currentAuthenticatedUser() {
+  const onClickCard = (id) => {
+    navigate('/room/?roomId=' + id);  
+  };
+  useEffect(() => {
+    const checkUser = async () => {
       try {
-        const { username, userId, signInDetails } = await getCurrentUser();
-        console.log(`The username: ${username}`);
-        console.log(`The userId: ${userId}`);
-        console.log(`The signInDetails: ${signInDetails}`);
-                setIsLoggedIn(true);
-
+        await getCurrentUser();
+        setIsLoggedIn(true);
       } catch {
         setIsLoggedIn(false);
-}
+      }
     };
 
     checkUser();
   }, []);
 
-
-  // useEffect(() => {
-  //   const checkUser = async () => {
-  //     try {
-  //       await currentAuthenticatedUser();
-  //       setIsLoggedIn(true);
-  //     } catch {
-  //       setIsLoggedIn(false);
-  //     }
-  //   };
-
-  //   checkUser();
-  // }, []);
-
   const handleSignOut = async () => {
     try {
       await signOut();
+      localStorage.clear();
       setIsLoggedIn(false);
     } catch (error) {
       console.log('Error signing out: ', error);
     }
   };
 
+  useEffect(() => {
+    const checkUser = async function currentAuthenticatedUser() {
+    try {
+      const { username, userId, signInDetails } = await getCurrentUser();
+      console.log(`The username: ${username}`);
+      console.log(`The userId: ${userId}`);
+      console.log(`The signInDetails: ${signInDetails}`);
+      setIsLoggedIn(true);
+      } catch {
+        setIsLoggedIn(false);
+      }
+    };
+    checkUser();
+  }, []);
+
   return (
-    <div>
-      <NavBar isLoggedIn={isLoggedIn} handleSignOut={handleSignOut} />
-      <header>
-        <h1>Welcome to My Website</h1>
-      </header>
-      <main>
-        <p>Homepage content...</p>
-      </main>
+    <div className="home">
+      <Grid container spacing={2} className="home-cards">
+        {rooms.map((room, index) => (
+          <Grid item xs={12} sm={6} md={4} key={index} onClick={() => onClickCard(room?.id)}>
+            <RoomCard 
+              image={room?.image}
+              name={room?.name}
+              beds={room?.beds}
+            />
+          </Grid>
+        ))}
+      </Grid>
       <footer className="App-footer">
         <ChatBot />
       </footer>

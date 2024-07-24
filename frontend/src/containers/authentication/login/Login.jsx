@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Container, TextField, Button, Typography, Box, Grid, Link } from '@mui/material';
+import { Container, TextField, Button, Typography, Box, Grid } from '@mui/material';
 import { signIn } from 'aws-amplify/auth';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Login = () => {
   const [form, setForm] = useState({
@@ -12,12 +12,14 @@ const Login = () => {
   const [signInError, setSignInError] = useState(null);
   const navigate = useNavigate();
 
+
   const onSubmit = async (e) => {
     e.preventDefault();
     if (validate()) {
       try {
         const res = await signIn({ username: form.email, password: form.password });
         localStorage.setItem("email", form.email);
+        console.log(form?.email)
         navigate('/securityanswers', { state: { email: form.email } });
       } catch (error) {
         setSignInError(error.message);
@@ -117,6 +119,9 @@ const Login = () => {
             >
               Sign In
             </Button>
+            <Typography variant="body2" color="textSecondary" align="center">
+              Already have an account? <Link component={Link} to="/signup">Sign up</Link>
+            </Typography>
             {/* <Typography variant="body2" color="textSecondary" align="center">
               <Link component="button" onClick={handleForgotPassword}>
                 Forgot password?
