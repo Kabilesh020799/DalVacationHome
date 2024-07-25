@@ -28,30 +28,7 @@ const Home = () => {
     checkUser();
   }, []);
 
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-      localStorage.clear();
-      setIsLoggedIn(false);
-    } catch (error) {
-      console.log('Error signing out: ', error);
-    }
-  };
 
-  useEffect(() => {
-    const checkUser = async function currentAuthenticatedUser() {
-    try {
-      const { username, userId, signInDetails } = await getCurrentUser();
-      console.log(`The username: ${username}`);
-      console.log(`The userId: ${userId}`);
-      console.log(`The signInDetails: ${signInDetails}`);
-      setIsLoggedIn(true);
-      } catch {
-        setIsLoggedIn(false);
-      }
-    };
-    checkUser();
-  }, []);
 
   return (
     <div className="home">

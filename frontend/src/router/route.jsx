@@ -11,13 +11,13 @@ const MainRoute = () => {
   const handleSignOut = async () => {
     try {
       await signOut();
+      localStorage.clear();
       navigate('/login');
       setIsLoggedIn(false);
     } catch (error) {
       console.log('Error signing out: ', error);
     }
   };
-
   useEffect(() => {
     const checkUser = async function currentAuthenticatedUser() {
     try {
