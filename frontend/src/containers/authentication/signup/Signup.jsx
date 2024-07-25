@@ -4,6 +4,7 @@ import { signUp, confirmSignUp } from 'aws-amplify/auth';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import './style.scss';
+import { subscribeSNS } from './apiUtils';
 
 const Signup = () => {
   const [form, setForm] = useState({
@@ -30,13 +31,12 @@ const onSubmit = async (e) => {
         });
         setSignUpInfo(res);
           setOtpSent(true);
-            const response = await axios.post('https://kadcflatfj.execute-api.us-east-1.amazonaws.com/dev/users', {
-          email: form.email,
-          username: form.name,
-          password: form.password,
-        });
-         console.log(response.data);
-}         catch (error) {
+          await axios.post('https://kadcflatfj.execute-api.us-east-1.amazonaws.com/dev/users', {
+            email: form.email,
+            username: form.name,
+            password: form.password,
+          });
+      } catch (error) {
         console.log(error.message);
       }
     }
@@ -46,10 +46,11 @@ const onSubmit = async (e) => {
   const onVerifyOtp = async (e) => {
     e.preventDefault();
     try {
-        confirmSignUp({
+      await confirmSignUp({
         username: signUpInfo?.userId,
         confirmationCode: otp,
       });
+      await subscribeSNS({ email: form?.email });
       alert('Verification successful! Now provide authentication details.');
       localStorage.setItem("email",form.email)  
       navigate('/securityquestions');

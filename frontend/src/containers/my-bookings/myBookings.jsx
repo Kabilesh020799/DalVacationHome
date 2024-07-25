@@ -54,7 +54,7 @@ console.log(bookings);
                   </TableCell>
                   <TableCell>
                     <Button variant='contained' onClick={() => navigate(`/room/?roomId=${booking.id}`)} style={{ outline: 'none' }}>View</Button>
-                    <Button variant='outlined' color='error' style={{ marginLeft: '20px', outline: 'none' }}>Cancel Booking</Button>
+                    {/* <Button variant='outlined' color='error' style={{ marginLeft: '20px', outline: 'none' }}>Cancel Booking</Button> */}
                   </TableCell>
                 </TableRow>
               ))}
