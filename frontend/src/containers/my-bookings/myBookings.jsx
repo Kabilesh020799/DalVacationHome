@@ -12,14 +12,54 @@ import {
   TableRow,
   Button,
   Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
 } from "@mui/material";
-import { getBookings } from "./apiUtils";
+import { getBookings, postFeedback } from "./apiUtils";
 import { rooms } from "../home/constants";
 import { useNavigate } from "react-router-dom";
 import ChatBot from "../../components/chat-bot/ChatBot";
 
+const FeedbackModal = ({ open, handleClose, handleSubmit, feedback, setFeedback }) => {
+  return (
+    <Dialog open={open} onClose={handleClose}>
+      <DialogTitle>Feedback</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          Please provide your feedback for this booking.
+        </DialogContentText>
+        <TextField
+          autoFocus
+          margin="dense"
+          label="Feedback"
+          type="text"
+          fullWidth
+          variant="outlined"
+          value={feedback}
+          onChange={(e) => setFeedback(e.target.value)}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose} color="primary">
+          Cancel
+        </Button>
+        <Button onClick={handleSubmit} color="primary">
+          Submit
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
 const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [feedback, setFeedback] = useState("");
   const navigate = useNavigate();
 
   const email = localStorage.getItem("email");
@@ -34,8 +74,29 @@ const MyBookings = () => {
       setBookings(finalRes);
     };
     getData();
-  }, []);
-  console.log(bookings);
+  }, [email]);
+
+  const handleOpen = (booking) => {
+    setSelectedBooking(booking);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setFeedback("");
+  };
+console.log(selectedBooking)
+  const handleSubmit = () => {
+    console.log(`Feedback for booking ${selectedBooking.bookingReference}: ${feedback}`);
+    postFeedback({
+      bookingref: selectedBooking?.bookingReference,
+      feedback,
+      room_id: selectedBooking?.id,
+      sentiment_category: ""
+    })
+    handleClose();
+  };
+
   return (
     <Container>
       <Box sx={{ my: 4 }}>
@@ -50,10 +111,9 @@ const MyBookings = () => {
                 <TableCell style={{ fontWeight: "bold" }}>Room Name</TableCell>
                 <TableCell style={{ fontWeight: "bold" }}>From Date</TableCell>
                 <TableCell style={{ fontWeight: "bold" }}>To Date</TableCell>
-                <TableCell style={{ fontWeight: "bold" }}>
-                  Number of Guests
-                </TableCell>
+                <TableCell style={{ fontWeight: "bold" }}>Number of Guests</TableCell>
                 <TableCell style={{ fontWeight: "bold" }}>Status</TableCell>
+                <TableCell style={{ fontWeight: "bold" }}>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -70,17 +130,9 @@ const MyBookings = () => {
                   <TableCell>{booking.guests || "-"}</TableCell>
                   <TableCell>
                     {booking.status === "failed" ? (
-                      <Chip
-                        variant="outlined"
-                        color="error"
-                        label={booking.status}
-                      />
+                      <Chip variant="outlined" color="error" label={booking.status} />
                     ) : (
-                      <Chip
-                        variant="outlined"
-                        color="success"
-                        label={booking.status}
-                      />
+                      <Chip variant="outlined" color="success" label={booking.status} />
                     )}
                   </TableCell>
                   <TableCell>
@@ -91,7 +143,16 @@ const MyBookings = () => {
                     >
                       View
                     </Button>
-                    {/* <Button variant='outlined' color='error' style={{ marginLeft: '20px', outline: 'none' }}>Cancel Booking</Button> */}
+                    {booking.status !== "failed" ? (
+                      <Button
+                        variant="outlined"
+                        color="success"
+                        style={{ marginLeft: "20px", outline: "none" }}
+                        onClick={() => handleOpen(booking)}
+                      >
+                        Feedback
+                      </Button>
+                    ) : null}
                   </TableCell>
                 </TableRow>
               ))}
@@ -100,6 +161,13 @@ const MyBookings = () => {
         </TableContainer>
       </Box>
       <ChatBot />
+      <FeedbackModal
+        open={open}
+        handleClose={handleClose}
+        handleSubmit={handleSubmit}
+        feedback={feedback}
+        setFeedback={setFeedback}
+      />
     </Container>
   );
 };

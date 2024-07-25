@@ -95,57 +95,59 @@ const ChatBot = () => {
 
   return (
     <div className="chatbot-container">
-      <div className={`chatbot ${isOpen ? "open" : ""}`}>
-        <div className="chat-header">
-          <button className="close-button-bot" onClick={handleClose}>
-            X
-          </button>
-        </div>
-        <div className="chat-messages">
-          {chatData.map((chat, index) => (
-            <div
-              key={index}
-              className={`chat-message ${chat.fromUser ? "user" : "bot"}`}
-            >
-              <span className="chat-sender">
-                {chat.fromUser ? "User" : "Bot"}
-              </span>
-              <div className={`chat-content ${chat.fromUser ? "user" : "bot"}`}>
-                {chat.fromUser ? (
-                  chat.message
-                ) : (
-                  <span dangerouslySetInnerHTML={{ __html: chat.message }} />
-                )}
+      {
+        !isOpen ? (
+          <div className="chat-icon" onClick={toggleChat}>
+            Bot
+          </div>
+        ) : (
+          <div className={`chatbot ${isOpen ? "open" : ""}`}>
+          <div className="chat-header">
+            <button className="close-button-bot" onClick={handleClose}>
+              X
+            </button>
+          </div>
+          <div className="chat-messages">
+            {chatData.map((chat, index) => (
+              <div
+                key={index}
+                className={`chat-message ${chat.fromUser ? "user" : "bot"}`}
+              >
+                <span className="chat-sender">
+                  {chat.fromUser ? "User" : "Bot"}
+                </span>
+                <div className={`chat-content ${chat.fromUser ? "user" : "bot"}`}>
+                  {chat.fromUser ? (
+                    chat.message
+                  ) : (
+                    <span dangerouslySetInnerHTML={{ __html: chat.message }} />
+                  )}
+                </div>
+                <span className="chat-time">{chat.time}</span>
               </div>
-              <span className="chat-time">{chat.time}</span>
-            </div>
-          ))}
-          {loading && (
-            <div className="chat-message loading">
-              <span className="chat-sender">Bot</span>
-              <span>Loading...</span>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
-        <div className="chat-input">
-          <input
-            type="text"
-            value={inputText}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            placeholder="Type your message..."
-            disabled={loading}
-          />
-          <button onClick={handleSend} disabled={loading}>
-            {loading ? "Sending..." : "Send"}
-          </button>
-        </div>
-      </div>
-      {!isOpen && (
-        <div className="chat-icon" onClick={toggleChat}>
-          Bot
-        </div>
+            ))}
+            {loading && (
+              <div className="chat-message loading">
+                <span className="chat-sender">Bot</span>
+                <span>Loading...</span>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+          <div className="chat-input">
+            <input
+              type="text"
+              value={inputText}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              placeholder="Type your message..."
+              disabled={loading}
+            />
+            <button onClick={handleSend} disabled={loading}>
+              {loading ? "Sending..." : "Send"}
+            </button>
+          </div>
+          </div>
       )}
     </div>
   );

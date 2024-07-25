@@ -10,6 +10,16 @@ const getBookings = async(params) => {
   return JSON.parse(res.data.body);
 };
 
+const postFeedback = async(params) => {
+  const url = 'https://sgegq6ro6b.execute-api.us-east-1.amazonaws.com/prod/addFeedback';
+  await axios.post(url, { ...params }, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+}
+
 export {
   getBookings,
+  postFeedback,
 };
