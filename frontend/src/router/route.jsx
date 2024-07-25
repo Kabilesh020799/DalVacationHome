@@ -24,11 +24,14 @@ const MainRoute = () => {
   useEffect(() => {
     const checkUser = async () => {
       const role = localStorage.getItem('userType');
-      if (role) {
-        setUserRole(role);
+      const email = localStorage.getItem('email');
+      if (email) {
         setIsLoggedIn(true);
       } else {
         setIsLoggedIn(false);
+      }
+      if(userRole) {
+        setUserRole(role);
       }
     };
     if(!localStorage.getItem("userType")) {
