@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, TextField, Button, Typography, Box } from '@mui/material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { sendMessage } from './apiUtils';
 
 const generateCaesarCode = () => {
   const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -48,9 +49,7 @@ const SecurityAnswers = () => {
           caesarCode: caesarCode,
           caesarCipherAnswer: form.caesarCipherAnswer
         });
-
-          console.log("Response from API:", response.data);
-
+        await sendMessage({ email }); 
           let responseBody;
           try {
             responseBody = JSON.parse(response.data.body);
