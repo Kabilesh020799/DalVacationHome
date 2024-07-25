@@ -1,4 +1,3 @@
-import About from "../containers/home/About";
 import Home from "../containers/home/Home";
 import Signup from "../containers/authentication/signup/Signup";
 import SecurityQuestions from "../containers/authentication/signup/SecurityQuestions";
@@ -38,11 +37,6 @@ const routes = [
     component: <SecurityAnswers />,
   },
   {
-    id: "about",
-    route: "about",
-    component: <About />,
-  },
-  {
     id: "tickets",
     route: "/tickets",
     component: (
@@ -50,11 +44,6 @@ const routes = [
         <Tickets />
       </ChatProvider>
     ),
-  },
-  {
-    id: "about",
-    route: "about",
-    component: <About />,
   },
   {
     id: "feedback",

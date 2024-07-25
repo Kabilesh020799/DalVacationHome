@@ -1,26 +1,36 @@
-import React, { useState } from 'react';
-import { Container, TextField, Button, Typography, Box, Grid } from '@mui/material';
-import { signIn } from 'aws-amplify/auth';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState } from "react";
+import {
+  Container,
+  TextField,
+  Button,
+  Typography,
+  Box,
+  Grid,
+} from "@mui/material";
+import { signIn } from "aws-amplify/auth";
+import { useNavigate, Link } from "react-router-dom";
+import ChatBot from "../../../components/chat-bot/ChatBot";
 
 const Login = () => {
   const [form, setForm] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
   const [errors, setErrors] = useState({});
   const [signInError, setSignInError] = useState(null);
   const navigate = useNavigate();
 
-
   const onSubmit = async (e) => {
     e.preventDefault();
     if (validate()) {
       try {
-        const res = await signIn({ username: form.email, password: form.password });
+        const res = await signIn({
+          username: form.email,
+          password: form.password,
+        });
         localStorage.setItem("email", form.email);
-        console.log(form?.email)
-        navigate('/securityanswers', { state: { email: form.email } });
+        console.log(form?.email);
+        navigate("/securityanswers", { state: { email: form.email } });
       } catch (error) {
         setSignInError(error.message);
       }
@@ -30,12 +40,14 @@ const Login = () => {
   const validate = () => {
     let formErrors = {};
     formErrors.email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)
-      ? ''
-      : 'Invalid Email.';
+      ? ""
+      : "Invalid Email.";
     formErrors.password =
-      form.password.length >= 8 ? '' : 'Password must be at least 8 characters.';
+      form.password.length >= 8
+        ? ""
+        : "Password must be at least 8 characters.";
     setErrors(formErrors);
-    return Object.values(formErrors).every((x) => x === '');
+    return Object.values(formErrors).every((x) => x === "");
   };
 
   const onChange = (e) => {
@@ -43,14 +55,14 @@ const Login = () => {
     setForm({ ...form, [name]: value });
   };
 
-//   const handleForgotPassword = async () => {
-//     try {
-//      const password = await forgotPassword(form.email);
-//       navigate('/forgot-password', { state: { email: form.email } });
-//     } catch (error) {
-//       setSignInError(error.message);
-//     }
-//   };
+  //   const handleForgotPassword = async () => {
+  //     try {
+  //      const password = await forgotPassword(form.email);
+  //       navigate('/forgot-password', { state: { email: form.email } });
+  //     } catch (error) {
+  //       setSignInError(error.message);
+  //     }
+  //   };
 
   return (
     <div className="login">
@@ -58,19 +70,20 @@ const Login = () => {
         maxWidth="xs"
         className="login-container"
         sx={{
-          backgroundColor: '#ffffff'
+          backgroundColor: "#ffffff",
         }}
       >
         <Box
           sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}
         >
-          <Typography sx={{
-            marginTop: '60px',
-          }}
+          <Typography
+            sx={{
+              marginTop: "60px",
+            }}
             component="h1"
             variant="h5"
             color="black"
@@ -120,7 +133,10 @@ const Login = () => {
               Sign In
             </Button>
             <Typography variant="body2" color="textSecondary" align="center">
-              Create a new account? <Link component={Link} to="/signup">Sign up</Link>
+              Create a new account?{" "}
+              <Link component={Link} to="/signup">
+                Sign up
+              </Link>
             </Typography>
             {/* <Typography variant="body2" color="textSecondary" align="center">
               <Link component="button" onClick={handleForgotPassword}>
@@ -130,6 +146,7 @@ const Login = () => {
           </Box>
         </Box>
       </Container>
+      <ChatBot />
     </div>
   );
 };
