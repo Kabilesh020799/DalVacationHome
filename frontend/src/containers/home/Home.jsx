@@ -4,7 +4,6 @@ import RoomCard from "../../components/card";
 import { rooms } from "./constants";
 import "./style.scss";
 import Grid from "@mui/material/Grid";
-import { getCurrentUser } from "aws-amplify/auth";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {

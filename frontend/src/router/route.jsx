@@ -31,6 +31,9 @@ const MainRoute = () => {
         setIsLoggedIn(false);
       }
     };
+    if(!localStorage.getItem("userType")) {
+      localStorage.setItem('userType', "guest");
+    }
     checkUser();
   }, [location]);
 
