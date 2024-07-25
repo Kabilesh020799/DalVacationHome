@@ -32,7 +32,7 @@ const MainRoute = () => {
       }
     };
     checkUser();
-  }, []);
+  }, [location]);
 
   return (
     <>
