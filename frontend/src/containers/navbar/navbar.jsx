@@ -22,24 +22,49 @@ export default function NavBar({ isLoggedIn, handleSignOut }) {
             aria-label="menu"
             sx={{ color: 'white', mr: 2 }}
           >
+            <MenuIcon />
           </IconButton>
-          <Typography variant="h6" component="div" onClick={() => navigate('/home')} sx={{ flexGrow: 1, color: 'white', cursor: 'pointer' }}>
+          <Typography
+            variant="h6"
+            component="div"
+            onClick={() => navigate('/home')}
+            sx={{ flexGrow: 1, color: 'white', cursor: 'pointer' }}
+          >
             DalVacation Home
           </Typography>
-          
+          <Typography
+                variant="body1"
+                onClick={() => navigate('/statistics')}
+                sx={{ marginLeft: '20px', cursor: 'pointer', color: 'white' }}
+              >
+                Statistics
+              </Typography>
           {isLoggedIn ? (
             <>
-              <Typography variant="body1" onClick={() => navigate('/my-bookings')} sx={{ marginLeft: '20px', cursor: 'pointer', color: 'white' }}>
+              <Typography
+                variant="body1"
+                onClick={() => navigate('/my-bookings')}
+                sx={{ marginLeft: '20px', cursor: 'pointer', color: 'white' }}
+              >
                 My Bookings
               </Typography>
-              <Button color="inherit" sx={{ color: 'white' }} onClick={handleSignOut}>SignOut</Button>
+              
+              <Button color="inherit" sx={{ color: 'white' }} onClick={handleSignOut}>Sign Out</Button>
             </>
           ) : (
             <>
-              <Typography variant="body1" onClick={() => navigate('/login')} sx={{ marginLeft: '20px', cursor: 'pointer' }}>
+              <Typography
+                variant="body1"
+                onClick={() => navigate('/login')}
+                sx={{ marginLeft: '20px', cursor: 'pointer', color: 'white', }}
+              >
                 Login
               </Typography>
-              <Typography variant="body1" onClick={() => navigate('/signup')} sx={{ marginLeft: '20px', cursor: 'pointer' }}>
+              <Typography
+                variant="body1"
+                onClick={() => navigate('/signup')}
+                sx={{ marginLeft: '20px', cursor: 'pointer', color: 'white', }}
+              >
                 Sign Up
               </Typography>
             </>
