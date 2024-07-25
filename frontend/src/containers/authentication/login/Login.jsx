@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   TextField,
@@ -63,6 +63,10 @@ const Login = () => {
   //       setSignInError(error.message);
   //     }
   //   };
+
+  useEffect(() => {
+    localStorage.clear();
+  }, []);
 
   return (
     <div className="login">
