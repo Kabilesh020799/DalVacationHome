@@ -120,7 +120,7 @@ const Login = () => {
               Sign In
             </Button>
             <Typography variant="body2" color="textSecondary" align="center">
-              Already have an account? <Link component={Link} to="/signup">Sign up</Link>
+              Create a new account? <Link component={Link} to="/signup">Sign up</Link>
             </Typography>
             {/* <Typography variant="body2" color="textSecondary" align="center">
               <Link component="button" onClick={handleForgotPassword}>
