@@ -145,7 +145,7 @@ const RoomDetail = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      {userTpe !== null && userTpe === "Customer" && <ChatBot />}
+      {userTpe !== null && userTpe === "Agent" ? null : <ChatBot />}
     </div>
   );
 };
