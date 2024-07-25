@@ -47,11 +47,6 @@ const routes = [
     component: <Tickets />
   },
   {
-    id: 'about',
-    route: 'about',
-    component: <About />
-  },
-  {
     id: 'feedback',
     route: '/feedback',
     component: <Feedback />
@@ -64,12 +59,14 @@ const routes = [
   {
     id: 'statistics',
     route: '/statistics',
-    component: <LookerStudioChart />
+    component: <LookerStudioChart />,
+    roles: ['Agent']
   },
   {
     id: 'my-bookings',
     route: '/my-bookings',
     component: <MyBookings />,
+    roles: ['Customer']
   }
 ];
 
