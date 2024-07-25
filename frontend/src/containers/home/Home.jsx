@@ -1,34 +1,19 @@
 import React, { useState, useEffect } from "react";
 import ChatBot from "../../components/chat-bot/ChatBot";
-import NavBar from "../navbar/navbar";
 import RoomCard from "../../components/card";
 import { rooms } from "./constants";
 import "./style.scss";
 import Grid from "@mui/material/Grid";
-import { signOut, getCurrentUser } from "aws-amplify/auth";
+import { getCurrentUser } from "aws-amplify/auth";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const email = localStorage.getItem("email");
   const userTpe = localStorage.getItem("userType");
 
   const onClickCard = (id) => {
     navigate("/room/?roomId=" + id);
   };
-  useEffect(() => {
-    const checkUser = async () => {
-      try {
-        await getCurrentUser();
-        setIsLoggedIn(true);
-      } catch {
-        setIsLoggedIn(false);
-      }
-    };
-
-    checkUser();
-  }, []);
 
   return (
     <div className="home">

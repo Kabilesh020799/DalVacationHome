@@ -46,9 +46,11 @@ const MainRoute = () => {
               key={route?.id}
               path={route?.route}
               element={
-                <ProtectedRoute roles={route?.roles} userRole={userRole}>
-                  {route?.component}
-                </ProtectedRoute>
+                userRole ? (
+                  <ProtectedRoute roles={route?.roles} userRole={userRole}>
+                    {route?.component}
+                  </ProtectedRoute>
+                ) : null
               }
             />
           ))
