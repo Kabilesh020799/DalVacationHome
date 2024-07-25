@@ -12,10 +12,15 @@ import { doc, or, setDoc } from "firebase/firestore";
 const ChatContext = createContext(null);
 
 function ChatProvider({ children }) {
-  const userId = "raj@gmail.com"; // Fetch from auth
-  const userType = "CUSTOMER";
+  let userId = localStorage.getItem("email");
+  let userType = localStorage.getItem("userType");
   const [chats, setChats] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  if (userId === null) {
+    userId = "";
+    userType = "";
+  }
 
   useEffect(() => {
     const chatsRef = collection(firestore, "tickets");

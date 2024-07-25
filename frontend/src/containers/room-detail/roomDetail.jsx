@@ -1,11 +1,23 @@
-import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { Box, Container, Typography, Button, Chip, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { rooms } from '../home/constants';
-import { confirmBooking } from './apiUtils';
+import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
+import {
+  Box,
+  Container,
+  Typography,
+  Button,
+  Chip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+} from "@mui/material";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { rooms } from "../home/constants";
+import { confirmBooking } from "./apiUtils";
+import ChatBot from "../../components/chat-bot/ChatBot";
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
@@ -13,10 +25,11 @@ const useQuery = () => {
 
 const RoomDetail = () => {
   const query = useQuery();
-  const roomId = query.get('roomId');
+  const roomId = query.get("roomId");
   const room = rooms.find((room) => room?.id == roomId) || {};
   const email = localStorage.getItem("email");
-  
+  const userTpe = localStorage.getItem("userType");
+
   const [open, setOpen] = useState(false);
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
@@ -36,34 +49,38 @@ const RoomDetail = () => {
       fromDate,
       toDate,
       guests,
-    })
+    });
     setOpen(false);
-  }
+  };
 
   return (
     <div>
       <Box
         component="img"
         sx={{
-          width: '100%',
-          height: '450px',
+          width: "100%",
+          height: "450px",
         }}
         alt={room.name}
         src={room.image}
       />
       <Container>
         <Box sx={{ my: 4 }}>
-          <Box 
-            sx={{ 
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              alignItems: 'center' 
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
             <Typography gutterBottom variant="h4" component="div">
               {room.name}
             </Typography>
-            <Button variant="contained" color="primary" onClick={handleClickOpen}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleClickOpen}
+            >
               Book Now
             </Button>
           </Box>
@@ -76,10 +93,15 @@ const RoomDetail = () => {
           <Typography variant="body1" color="text.secondary" sx={{ mt: 2 }}>
             <b>Price:</b> {room.price}
           </Typography>
-          <div style={{ display:'flex', gap: '15px', marginTop: '20px' }}>
-            {
-              room?.amenities?.map((amenity) => <Chip key={amenity} label={amenity} color="primary" variant="outlined" />)
-            }
+          <div style={{ display: "flex", gap: "15px", marginTop: "20px" }}>
+            {room?.amenities?.map((amenity) => (
+              <Chip
+                key={amenity}
+                label={amenity}
+                color="primary"
+                variant="outlined"
+              />
+            ))}
           </div>
         </Box>
       </Container>
@@ -91,14 +113,18 @@ const RoomDetail = () => {
               label="From Date"
               value={fromDate}
               onChange={(newValue) => setFromDate(newValue)}
-              renderInput={(params) => <TextField {...params} fullWidth margin="dense" />}
+              renderInput={(params) => (
+                <TextField {...params} fullWidth margin="dense" />
+              )}
             />
             <DatePicker
               label="To Date"
-              sx={{ marginLeft: '20px', marginBottom: '20px' }}
+              sx={{ marginLeft: "20px", marginBottom: "20px" }}
               value={toDate}
               onChange={(newValue) => setToDate(newValue)}
-              renderInput={(params) => <TextField {...params} fullWidth margin="dense" />}
+              renderInput={(params) => (
+                <TextField {...params} fullWidth margin="dense" />
+              )}
             />
           </LocalizationProvider>
           <TextField
@@ -119,6 +145,7 @@ const RoomDetail = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      {userTpe !== null && userTpe === "Customer" && <ChatBot />}
     </div>
   );
 };

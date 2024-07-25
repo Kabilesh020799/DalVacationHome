@@ -14,12 +14,13 @@ const Tickets = () => {
   const userId = chatContext.userId;
   const userType = chatContext.userType;
 
+  console.log(userId);
   useEffect(() => {
     const fetchTickets = async () => {
       try {
         const response = await axios.post(
           "https://us-central1-sample-311412.cloudfunctions.net/getTickets",
-          { userId: userId, userType: userType },
+          { userId: userId, userType: userType.toUpperCase() },
           {
             headers: {
               "Content-Type": "application/json",
