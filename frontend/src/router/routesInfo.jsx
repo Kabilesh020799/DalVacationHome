@@ -4,6 +4,7 @@ import Signup from "../containers/authentication/signup/Signup";
 import SecurityQuestions from "../containers/authentication/signup/SecurityQuestions";
 import SecurityAnswers from "../containers/authentication/login/SecurityAnswers";
 import Login from "../containers/authentication/login/Login";
+import LookerStudioChart from "../components/lookerstudio/LookerStudioChart";
 
 import Tickets from "../containers/tickets"
 import Feedback from "../containers/feedback"
@@ -59,6 +60,11 @@ const routes = [
     id: 'room',
     route: '/room',
     component: <RoomDetail />
+  },
+  {
+    id: 'statistics',
+    route: '/statistics',
+    component: <LookerStudioChart />
   },
   {
     id: 'my-bookings',
