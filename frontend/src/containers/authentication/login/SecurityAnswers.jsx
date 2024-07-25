@@ -66,6 +66,8 @@ const SecurityAnswers = () => {
             localStorage.setItem('userType', responseBody.userType);
             localStorage.setItem('user_id', responseBody.user_id);
             localStorage.setItem('token', responseBody.token); 
+            localStorage.setItem('userName', responseBody.username); 
+
 
             alert('Security Questions and Caesar Cipher Verified Successfully!');
             navigate('/home', { state: { email, userType: responseBody.userType, user_id: responseBody.user_id } });

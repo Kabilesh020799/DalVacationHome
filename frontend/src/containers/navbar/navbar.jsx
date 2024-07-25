@@ -5,7 +5,6 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
 import { useNavigate } from "react-router-dom";
 
 export default function NavBar({ isLoggedIn, handleSignOut }) {
@@ -23,7 +22,6 @@ export default function NavBar({ isLoggedIn, handleSignOut }) {
             aria-label="menu"
             sx={{ color: "white", mr: 2 }}
           >
-            <MenuIcon />
           </IconButton>
           <Typography
             variant="h6"

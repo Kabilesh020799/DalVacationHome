@@ -63,6 +63,7 @@ const MyBookings = () => {
   const navigate = useNavigate();
 
   const email = localStorage.getItem("email");
+  const userName = localStorage.getItem("userName");
 
   useEffect(() => {
     const getData = async () => {
@@ -85,13 +86,13 @@ const MyBookings = () => {
     setOpen(false);
     setFeedback("");
   };
-console.log(selectedBooking)
+
   const handleSubmit = () => {
-    console.log(`Feedback for booking ${selectedBooking.bookingReference}: ${feedback}`);
     postFeedback({
       bookingref: selectedBooking?.bookingReference,
       feedback,
       room_id: selectedBooking?.id,
+      userName,
       sentiment_category: ""
     })
     handleClose();
