@@ -8,17 +8,16 @@ const ChatBot = () => {
   const [chatData, setChatData] = useState([]);
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
+  let email = localStorage.getItem("email");
+  if (email == null) {
+    email = "";
+  }
 
   useEffect(() => {
     // clear this storage on logout
     const storedChatData = JSON.parse(localStorage.getItem("chatData")) || [];
     setChatData(storedChatData);
-    //remove after auth integration
-    localStorage.setItem(
-      "token",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJhakBnbWFpbC5jb20iLCJ1c2VyVHlwZSI6IkFHRU5UIiwiZXhwIjoxNzIxODU3MTY0fQ.c2sGGbGqnIt-hA_dYxEMpw7vOIb_3vxt40tyFVY5T2k"
-    );
-  }, []);
+  }, [email]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -42,19 +41,16 @@ const ChatBot = () => {
     setLoading(true);
 
     let requestText = inputText.trim();
-    let token = localStorage.getItem("token");
     let sessionId = "";
-    if (token !== undefined && token !== null && token !== "") {
-      sessionId = token.replace(/[^a-zA-Z0-9]/g, "").substring(0, 5);
-    } else {
-      token = "";
+    if (email !== "") {
+      sessionId = email.replace(/[^a-zA-Z0-9]/g, "").substring(0, 5);
     }
 
     if (
       inputText.trim().toLowerCase() === "yes" ||
       inputText.trim().toLowerCase() === "no"
     ) {
-      requestText = requestText + ":" + token;
+      requestText = requestText + ":" + email;
     }
 
     if (sessionId === "") {

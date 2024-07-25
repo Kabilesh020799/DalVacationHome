@@ -29,29 +29,6 @@ def create_ticket(customerId):
     logger.info(response)
     return ticket_id
 
-# Verify auth token.
-def verify_token(token):
-    url = 'https://k6k3r19jqf.execute-api.us-east-1.amazonaws.com/prod/verify-token'
-    headers = {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token
-    }
-    
-    response = requests.post(url, headers=headers, data=json.dumps(''))
-    
-    if response.status_code == 200:
-        data = response.json()
-        email = data.get('email')
-        return email, True
-    elif response.status_code == 401:
-        data = response.json()
-        message = data.get('message')
-        return message, False
-    else:
-        logger.error(f"Unexpected status code {response.status_code}: {response.text}")
-        return None, False
-
-
 # Function to raise support ticket.
 def raise_support_ticket(intent_request):
     session_attributes = get_session_attributes(intent_request)
@@ -60,17 +37,13 @@ def raise_support_ticket(intent_request):
 
     parts = input_text.split(':')
     text = ''
-    response, token = parts[0].strip(), parts[1].strip()
+    response, email = parts[0].strip(), parts[1].strip()
 
     if response and response.lower() == 'yes':
-        if token:
-            data, success = verify_token(token)
-            if success:
-                # send the concern to support agent
-                ticket_id = create_ticket(data)
-                text = "Ticket created successfully with Ticket# " + ticket_id
-            else:
-                text = data
+        if email:
+            # send the concern to support agent
+            ticket_id = create_ticket(email)
+            text = "Ticket created successfully with Ticket# " + ticket_id
         else:
             text = "Please login and raise a support request for your concern."
     elif response and response.lower() == 'no':
