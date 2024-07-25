@@ -133,7 +133,7 @@ const RoomDetail = () => {
             <Typography variant="h5" component="div" gutterBottom>
               Feedback
             </Typography>
-            {feedbacks.map((feedback, index) => (
+            {feedbacks.length ? feedbacks?.map((feedback, index) => (
               <Card key={index} sx={{ mb: 2 }}>
                 <CardContent>
                   <Box sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -149,7 +149,7 @@ const RoomDetail = () => {
                   </Typography>
                 </CardContent>
               </Card>
-            ))}
+            )) : null}
           </Box>
         </Box>
       </Container>

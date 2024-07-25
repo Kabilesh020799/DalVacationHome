@@ -7,7 +7,7 @@ import {
   Box,
   Grid,
 } from "@mui/material";
-import { signIn } from "aws-amplify/auth";
+import { fetchAuthSession, signIn } from "aws-amplify/auth";
 import { useNavigate, Link } from "react-router-dom";
 import ChatBot from "../../../components/chat-bot/ChatBot";
 
@@ -28,8 +28,12 @@ const Login = () => {
           username: form.email,
           password: form.password,
         });
+        const getAuthToken = async() => {
+          const auth = await fetchAuthSession();
+          localStorage.setItem("authToken", auth.tokens.idToken.toString());
+        };
+        await getAuthToken();
         localStorage.setItem("email", form.email);
-        console.log(form?.email);
         navigate("/securityanswers", { state: { email: form.email } });
       } catch (error) {
         setSignInError(error.message);

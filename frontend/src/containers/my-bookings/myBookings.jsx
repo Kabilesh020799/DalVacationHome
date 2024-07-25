@@ -23,6 +23,7 @@ import { getBookings, postFeedback } from "./apiUtils";
 import { rooms } from "../home/constants";
 import { useNavigate } from "react-router-dom";
 import ChatBot from "../../components/chat-bot/ChatBot";
+import { fetchAuthSession } from "@aws-amplify/auth";
 
 const FeedbackModal = ({ open, handleClose, handleSubmit, feedback, setFeedback }) => {
   return (
@@ -97,7 +98,7 @@ const MyBookings = () => {
     })
     handleClose();
   };
-
+  
   return (
     <Container>
       <Box sx={{ my: 4 }}>
