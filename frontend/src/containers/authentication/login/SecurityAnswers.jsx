@@ -41,7 +41,7 @@ const SecurityAnswers = () => {
     if (validate()) {
       try {
         console.log("Sending request with email:", email); // Debugging log
-        const response = await axios.post('https://kadcflatfj.execute-api.us-east-1.amazonaws.com/dev/users/securityanswers', {
+        const response = await axios.post('https://e5yan0pq7h.execute-api.us-east-1.amazonaws.com/dev/securityanswers', {
           email,
           answer1: form.answer1,
           answer2: form.answer2,

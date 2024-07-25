@@ -25,7 +25,7 @@ const SecurityQuestion = () => {
     e.preventDefault();
     if (validate()) {
       try {
-        await axios.post('https://kadcflatfj.execute-api.us-east-1.amazonaws.com/dev/users/securityquestions', {
+        await axios.post('https://e5yan0pq7h.execute-api.us-east-1.amazonaws.com/dev/securityquestions', {
           email,
           answer1: form.answer1,
           answer2: form.answer2,

@@ -39,7 +39,7 @@ const Signup = () => {
         setSignUpInfo(res);
         setOtpSent(true);
         await axios.post(
-          "https://kadcflatfj.execute-api.us-east-1.amazonaws.com/dev/users",
+          "https://e5yan0pq7h.execute-api.us-east-1.amazonaws.com/dev/users",
           {
             email: form.email,
             username: form.name,
@@ -51,7 +51,7 @@ const Signup = () => {
       }
     }
   };
-
+  
   const onVerifyOtp = async (e) => {
     e.preventDefault();
     try {
