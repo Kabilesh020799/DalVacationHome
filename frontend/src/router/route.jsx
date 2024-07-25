@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import routes from './routesInfo';
 import NavBar from '../containers/navbar/navbar';
-import { getCurrentUser, signOut } from 'aws-amplify/auth';
+import { signOut } from 'aws-amplify/auth';
 
 const MainRoute = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -19,16 +20,14 @@ const MainRoute = () => {
       console.log('Error signing out: ', error);
     }
   };
-  
+
   useEffect(() => {
-    const checkUser = async function currentAuthenticatedUser() {
-    try {
-      const { username, userId, signInDetails } = await getCurrentUser();
-      console.log(`The username: ${username}`);
-      console.log(`The userId: ${userId}`);
-      console.log(`The signInDetails: ${signInDetails}`);
-      setIsLoggedIn(true);
-      } catch {
+    const checkUser = async () => {
+      const role = localStorage.getItem('userType');
+      if (role) {
+        setUserRole(role);
+        setIsLoggedIn(true);
+      } else {
         setIsLoggedIn(false);
       }
     };
@@ -36,27 +35,38 @@ const MainRoute = () => {
   }, []);
 
   return (
-      <>
+    <>
+      {
+        !['/login', '/signup', '/securityanswers'].includes(location.pathname) ? <NavBar isLoggedIn={isLoggedIn} handleSignOut={handleSignOut} /> : null
+      }
+      <Routes>
         {
-          !['/login', '/signup', '/securityanswers'].includes(location.pathname) ? <NavBar isLoggedIn={isLoggedIn} handleSignOut={handleSignOut} /> : null
+          routes?.map((route) => (
+            <Route
+              key={route?.id}
+              path={route?.route}
+              element={
+                <ProtectedRoute roles={route?.roles} userRole={userRole}>
+                  {route?.component}
+                </ProtectedRoute>
+              }
+            />
+          ))
         }
-        <Routes>
-          {
-            routes?.map((route) => (
-              <Route
-                key={route?.id}
-                path={route?.route}
-                element={route?.component}
-              />
-            ))
-          }
-          <Route
-            path='*'
-            element={<Navigate to="/home" />}
-          />
-        </Routes>
-      </>
+        <Route
+          path='*'
+          element={<Navigate to="/home" />}
+        />
+      </Routes>
+    </>
   );
+};
+
+const ProtectedRoute = ({ roles, userRole, children }) => {
+  if (!roles || roles.includes(userRole)) {
+    return children;
+  }
+  return <Navigate to="/not-authorized" />;
 };
 
 export default MainRoute;

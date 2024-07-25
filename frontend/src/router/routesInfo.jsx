@@ -56,14 +56,16 @@ const routes = [
     component: <RoomDetail />,
   },
   {
-    id: "statistics",
-    route: "/statistics",
+    id: 'statistics',
+    route: '/statistics',
     component: <LookerStudioChart />,
+    roles: ['Agent']
   },
   {
     id: "my-bookings",
     route: "/my-bookings",
     component: <MyBookings />,
+    roles: ['Customer']
   },
 ];
 

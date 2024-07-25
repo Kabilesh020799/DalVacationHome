@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function NavBar({ isLoggedIn, handleSignOut }) {
   const navigate = useNavigate();
+  const userType = localStorage.getItem("userType");
   
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -32,15 +33,21 @@ export default function NavBar({ isLoggedIn, handleSignOut }) {
           >
             DalVacation Home
           </Typography>
-          <Typography
-                variant="body1"
-                onClick={() => navigate('/statistics')}
-                sx={{ marginLeft: '20px', cursor: 'pointer', color: 'white' }}
-              >
-                Statistics
-              </Typography>
+          {
+            userType === 'Agent' ? (
+            <Typography
+              variant="body1"
+              onClick={() => navigate('/statistics')}
+              sx={{ marginLeft: '20px', cursor: 'pointer', color: 'white' }}
+            >
+              Statistics
+            </Typography>
+          ) : null
+          }
           {isLoggedIn ? (
             <>
+            {
+            userType === 'Customer' ? (
               <Typography
                 variant="body1"
                 onClick={() => navigate('/my-bookings')}
@@ -48,6 +55,9 @@ export default function NavBar({ isLoggedIn, handleSignOut }) {
               >
                 My Bookings
               </Typography>
+            ) : null
+            }
+              
               
               <Button color="inherit" sx={{ color: 'white' }} onClick={handleSignOut}>Sign Out</Button>
             </>
