@@ -105,6 +105,7 @@ const RoomDetail = () => {
               variant="contained"
               color="primary"
               onClick={handleClickOpen}
+              style={ userType === 'guest' ? {display: "none"} : {} }
             >
               Book Now
             </Button>
