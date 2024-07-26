@@ -1,0 +1,395 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  # Create the Cognito User Pool
+  CognitoUserPool:
+    Type: 'AWS::Cognito::UserPool'
+    Properties:
+      UserPoolName: 'DalVacation'
+      AutoVerifiedAttributes:
+        - email
+
+  # Create the Cognito User Pool Client
+  CognitoUserPoolClient:
+    Type: 'AWS::Cognito::UserPoolClient'
+    Properties:
+      ClientName: 'DalVacationClient'
+      UserPoolId: !Ref CognitoUserPool
+      GenerateSecret: false
+
+  # Create the API Gateway Rest API
+  ApiGatewayRestApi:
+    Type: 'AWS::ApiGateway::RestApi'
+    Properties:
+      Name: 'DalVacationApi'
+      Description: 'API for Dal VacationHome'
+
+  # Create a Cognito Authorizer for the API Gateway
+  ApiGatewayAuthorizer:
+    Type: 'AWS::ApiGateway::Authorizer'
+    Properties:
+      Name: 'CognitoAuthorizer'
+      Type: 'COGNITO_USER_POOLS'
+      IdentitySource: 'method.request.header.Authorization'
+      RestApiId: !Ref ApiGatewayRestApi
+      ProviderARNs:
+        - !GetAtt CognitoUserPool.Arn
+
+  # Lambda Functions
+  SubscribeSnsFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      FunctionName: 'subscribe-sns-fn'
+      Handler: 'index.handler'
+      Role: 'arn:aws:iam::288937723576:role/LabRole'
+      Code:
+        S3Bucket: 'lambdafunctionsdalvacation'
+        S3Key: 'subscribeSNSTopic.zip'
+      Runtime: 'nodejs20.x'
+
+  SendMessageFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      FunctionName: 'send-message-fn'
+      Handler: 'index.handler'
+      Role: 'arn:aws:iam::288937723576:role/LabRole'
+      Code:
+        S3Bucket: 'lambdafunctionsdalvacation'
+        S3Key: 'publishSNSMessage.zip'
+      Runtime: 'nodejs20.x'
+
+  ConfirmBookingsFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      FunctionName: 'confirm-bookings-fn'
+      Handler: 'index.handler'
+      Role: 'arn:aws:iam::288937723576:role/LabRole'
+      Code:
+        S3Bucket: 'lambdafunctionsdalvacation'
+        S3Key: 'bookingApproval.zip'
+      Runtime: 'nodejs20.x'
+
+  GetBookingsFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      FunctionName: 'get-bookings-fn'
+      Handler: 'index.handler'
+      Role: 'arn:aws:iam::288937723576:role/LabRole'
+      Code:
+        S3Bucket: 'lambdafunctionsdalvacation'
+        S3Key: 'getBookingDetails.zip'
+      Runtime: 'nodejs20.x'
+
+  GetUserBookingsFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      FunctionName: 'get-user-bookings-fn'
+      Handler: 'index.handler'
+      Role: 'arn:aws:iam::288937723576:role/LabRole'
+      Code:
+        S3Bucket: 'lambdafunctionsdalvacation'
+        S3Key: 'getBookingsByUser.zip'
+      Runtime: 'nodejs20.x'
+
+  # API Gateway Resources and Methods
+  ApiGatewayResourceSubscribeSns:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
+      PathPart: 'subscribe-sns'
+      RestApiId: !Ref ApiGatewayRestApi
+
+  ApiGatewayResourceSendMessage:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
+      PathPart: 'send-message'
+      RestApiId: !Ref ApiGatewayRestApi
+
+  ApiGatewayResourceConfirmBookings:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
+      PathPart: 'confirm-bookings'
+      RestApiId: !Ref ApiGatewayRestApi
+
+  ApiGatewayResourceGetBookings:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
+      PathPart: 'get-bookings'
+      RestApiId: !Ref ApiGatewayRestApi
+
+  ApiGatewayResourceGetUserBookings:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
+      PathPart: 'get-user-bookings'
+      RestApiId: !Ref ApiGatewayRestApi
+
+  # Methods for subscribe-sns
+  SubscribeSnsPostMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      AuthorizationType: 'NONE'
+      HttpMethod: 'POST'
+      ResourceId:
+        Ref: 'ApiGatewayResourceSubscribeSns'
+      RestApiId:
+        Ref: 'ApiGatewayRestApi'
+      Integration:
+        IntegrationHttpMethod: 'POST'
+        Type: 'AWS_PROXY'
+        Uri:
+          Fn::Sub:
+            - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunctionArn}/invocations
+            - LambdaFunctionArn:
+                Fn::GetAtt: [SubscribeSnsFunction, Arn]
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+
+  SubscribeSnsOptionsMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      AuthorizationType: 'NONE'
+      HttpMethod: 'OPTIONS'
+      ResourceId:
+        Ref: 'ApiGatewayResourceSubscribeSns'
+      RestApiId:
+        Ref: 'ApiGatewayRestApi'
+      Integration:
+        Type: 'MOCK'
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+
+  # Methods for send-message
+  SendMessagePostMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      AuthorizationType: 'NONE'
+      HttpMethod: 'POST'
+      ResourceId:
+        Ref: 'ApiGatewayResourceSendMessage'
+      RestApiId:
+        Ref: 'ApiGatewayRestApi'
+      Integration:
+        IntegrationHttpMethod: 'POST'
+        Type: 'AWS_PROXY'
+        Uri:
+          Fn::Sub:
+            - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunctionArn}/invocations
+            - LambdaFunctionArn:
+                Fn::GetAtt: [SendMessageFunction, Arn]
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+
+  SendMessageOptionsMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      AuthorizationType: 'NONE'
+      HttpMethod: 'OPTIONS'
+      ResourceId:
+        Ref: 'ApiGatewayResourceSendMessage'
+      RestApiId:
+        Ref: 'ApiGatewayRestApi'
+      Integration:
+        Type: 'MOCK'
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+
+  # Methods for confirm-bookings
+  ConfirmBookingsPostMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      AuthorizationType: 'COGNITO_USER_POOLS'
+      AuthorizerId: !Ref ApiGatewayAuthorizer
+      HttpMethod: 'POST'
+      ResourceId:
+        Ref: 'ApiGatewayResourceConfirmBookings'
+      RestApiId:
+        Ref: 'ApiGatewayRestApi'
+      Integration:
+        IntegrationHttpMethod: 'POST'
+        Type: 'AWS_PROXY'
+        Uri:
+          Fn::Sub:
+            - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunctionArn}/invocations
+            - LambdaFunctionArn:
+                Fn::GetAtt: [ConfirmBookingsFunction, Arn]
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+
+  ConfirmBookingsOptionsMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      AuthorizationType: 'NONE'
+      HttpMethod: 'OPTIONS'
+      ResourceId:
+        Ref: 'ApiGatewayResourceConfirmBookings'
+      RestApiId:
+        Ref: 'ApiGatewayRestApi'
+      Integration:
+        Type: 'MOCK'
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+
+  # Methods for get-bookings
+  GetBookingsPostMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      AuthorizationType: 'COGNITO_USER_POOLS'
+      AuthorizerId: !Ref ApiGatewayAuthorizer
+      HttpMethod: 'POST'
+      ResourceId:
+        Ref: 'ApiGatewayResourceGetBookings'
+      RestApiId:
+        Ref: 'ApiGatewayRestApi'
+      Integration:
+        IntegrationHttpMethod: 'POST'
+        Type: 'AWS_PROXY'
+        Uri:
+          Fn::Sub:
+            - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunctionArn}/invocations
+            - LambdaFunctionArn:
+                Fn::GetAtt: [GetBookingsFunction, Arn]
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+
+  GetBookingsOptionsMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      AuthorizationType: 'NONE'
+      HttpMethod: 'OPTIONS'
+      ResourceId:
+        Ref: 'ApiGatewayResourceGetBookings'
+      RestApiId:
+        Ref: 'ApiGatewayRestApi'
+      Integration:
+        Type: 'MOCK'
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+
+  # Methods for get-user-bookings
+  GetUserBookingsPostMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      AuthorizationType: 'COGNITO_USER_POOLS'
+      AuthorizerId: !Ref ApiGatewayAuthorizer
+      HttpMethod: 'POST'
+      ResourceId:
+        Ref: 'ApiGatewayResourceGetUserBookings'
+      RestApiId:
+        Ref: 'ApiGatewayRestApi'
+      Integration:
+        IntegrationHttpMethod: 'POST'
+        Type: 'AWS_PROXY'
+        Uri:
+          Fn::Sub:
+            - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunctionArn}/invocations
+            - LambdaFunctionArn:
+                Fn::GetAtt: [GetUserBookingsFunction, Arn]
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+
+  GetUserBookingsOptionsMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      AuthorizationType: 'NONE'
+      HttpMethod: 'OPTIONS'
+      ResourceId:
+        Ref: 'ApiGatewayResourceGetUserBookings'
+      RestApiId:
+        Ref: 'ApiGatewayRestApi'
+      Integration:
+        Type: 'MOCK'
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
