@@ -22,7 +22,7 @@ def lambda_handler(event, context):
         )
         
         items = response.get('Items', [])
-        feedback_and_sentiment = [{'feedback': item['feedback'], 'sentiment_category': item['sentiment_category'], 'bookingref': item['bookingref']} for item in items]
+        feedback_and_sentiment = [{'feedback': item['feedback'], 'sentiment_category': item['sentiment_category'], 'bookingref': item['bookingref'], 'userName': item['userName']} for item in items]
         
         
         # Call the external API

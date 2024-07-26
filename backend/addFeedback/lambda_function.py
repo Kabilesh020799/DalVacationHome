@@ -17,6 +17,7 @@ def lambda_handler(event, context):
         feedback = event['feedback']
         room_id = event['room_id']
         sentiment_category = event['sentiment_category']
+        userName = event['userName']
         
         # Insert data into the DynamoDB table
         response = table.put_item(
@@ -24,7 +25,8 @@ def lambda_handler(event, context):
                 'bookingref': bookingref,  # Partition key
                 'feedback': feedback,
                 'room_id': room_id,
-                'sentiment_category': sentiment_category
+                'sentiment_category': sentiment_category,
+                'userName': userName
             }
         )
         
