@@ -4,6 +4,7 @@ import firebase_admin
 from firebase_admin import credentials, db
 from google.cloud import firestore
 from datetime import datetime
+import requests
 
 # Initialize Firebase Admin SDK with default credentials and specific database URL
 if not firebase_admin._apps:
@@ -29,6 +30,29 @@ def process_message(event, context):
         if not all([customer_id, ticket_id, query]):
             raise ValueError("Missing fields in the message data")
         
+        # Retrieve agents from the Realtime Database
+        '''agents_ref = db.reference('agents')
+        agents = agents_ref.get()
+        
+        if not agents:
+            raise ValueError("No agents found in the database")
+
+        # Randomly select an agent
+        agent_id = random.choice(list(agents.keys()))
+        agent_data = agents[agent_id]
+        agent_name = agent_data.get('agent_name')
+
+        if not agent_id or not agent_name:
+            raise ValueError("Missing agent_id or agent_name in the selected agent data")'''
+        
+        #url = 
+        agent_response = requests.get("https://e5yan0pq7h.execute-api.us-east-1.amazonaws.com/dev/random-agent")
+        agent_id = "defaultagent@gmail.com"
+        if agent_response.status_code == 200:
+            agent_id = agent_response.json()
+        else:
+            raise Exception(f"Failed to get agent ID: {response.status_code}")
+
         # Create a document in Realtime Database
         #ref = db.reference(f'tickets/{ticket_id}')
         '''ref.set({
