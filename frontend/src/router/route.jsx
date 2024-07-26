@@ -30,7 +30,7 @@ const MainRoute = () => {
       } else {
         setIsLoggedIn(false);
       }
-      if(userRole) {
+      if(role) {
         setUserRole(role);
       }
     };
