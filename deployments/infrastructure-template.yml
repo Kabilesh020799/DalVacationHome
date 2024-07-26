@@ -1,0 +1,265 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  ApiGatewayRestApi:
+    Type: 'AWS::ApiGateway::RestApi'
+    Properties:
+      Name: 'chat-bot1'
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+  ApiGatewayResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId:
+        Fn::GetAtt:
+          - ApiGatewayRestApi
+          - RootResourceId
+      PathPart: 'recognize'
+      RestApiId:
+        Ref: 'ApiGatewayRestApi'
+
+  ApiGatewayPostMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      AuthorizationType: 'NONE'
+      HttpMethod: 'POST'
+      ResourceId:
+        Ref: 'ApiGatewayResource'
+      RestApiId:
+        Ref: 'ApiGatewayRestApi'
+      Integration:
+        IntegrationHttpMethod: 'POST'
+        Type: 'AWS_PROXY'
+        Uri:
+          Fn::Sub:
+            - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunctionArn}/invocations
+            - LambdaFunctionArn:
+                Fn::GetAtt: [LexBackendLambdaFunction, Arn]
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+
+  ApiGatewayOptionsMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      AuthorizationType: 'NONE'
+      HttpMethod: 'OPTIONS'
+      ResourceId:
+        Ref: 'ApiGatewayResource'
+      RestApiId:
+        Ref: 'ApiGatewayRestApi'
+      Integration:
+        Type: 'MOCK'
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+
+  ApiGatewayDeployment:
+    Type: 'AWS::ApiGateway::Deployment'
+    Properties:
+      RestApiId:
+        Ref: 'ApiGatewayRestApi'
+      StageName: 'prod'
+    DependsOn:
+      - ApiGatewayPostMethod
+      - ApiGatewayOptionsMethod
+
+  LexBackendLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: lex-backend1
+      Handler: org.example.StreamLambdaHandler::handleRequest
+      Role: 
+        Fn::GetAtt: 
+          - LambdaExecutionRole
+          - Arn
+      Code:
+        S3Bucket: serverless-resources-899
+        S3Key: lex-backend-1.0-SNAPSHOT-lambda-package.zip
+      Runtime: java17
+
+  LambdaExecutionRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Principal:
+              Service: 'lambda.amazonaws.com'
+            Action: 'sts:AssumeRole'
+      Policies:
+        - PolicyName: 'LambdaExecutionPolicy'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: 'Allow'
+                Action:
+                  - 'logs:*'
+                  - 'lambda:*'
+                Resource: '*'
+  
+  LexProcessorLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: lex-processor
+      Handler: lex-processor.lambda_handler
+      Role: 
+        Fn::GetAtt: 
+          - LambdaExecutionRole
+          - Arn
+      Code:
+        S3Bucket: serverless-resources-899
+        S3Key: lex-processor.zip
+      Runtime: Python3.9
+
+  NavigationBot:
+    Type: 'AWS::Lex::Bot'
+    Properties:
+      Name: 'NavigationBot'
+      Locale: 'en-US'
+      ChildDirected: false
+      Intents:
+        - IntentName: !Ref NavigateBookingIntent
+        - IntentName: !Ref SignupIntent
+        - IntentName: !Ref SupportIntent
+        - IntentName: !Ref BookingInformationIntent
+      ClarificationPrompt:
+        MaxAttempts: 3
+        Messages:
+          - ContentType: 'PlainText'
+            Content: 'Sorry, can you please repeat that?'
+      AbortStatement:
+        Messages:
+          - ContentType: 'PlainText'
+            Content: 'Sorry, I am not able to assist with that.'
+
+  NavigateBookingIntent:
+    Type: 'AWS::Lex::Intent'
+    Properties:
+      Name: 'NavigateBookingIntent'
+      SampleUtterances:
+        - 'How can I book a room?'
+        - 'What is the process to reserve a room?'
+        - 'Can you guide me on how to book a room?'
+        - 'I need to book a room. What should I do?'
+        - 'Help me with booking a room.'
+        - 'Where can I book a room?'
+        - 'How do I reserve a room?'
+        - 'Can you show me how to book a room?'
+        - 'How do I make a room reservation?'
+        - 'What steps do I follow to book a room?'
+      FulfillmentActivity:
+        Type: 'ReturnIntent'
+      ConclusionStatement:
+        Messages:
+          - ContentType: 'PlainText'
+            Content: 'Once you are logged in you can book a room by clicking on book room by navigating home page listings.'
+
+  SignupIntent:
+    Type: 'AWS::Lex::Intent'
+    Properties:
+      Name: 'SignupIntent'
+      SampleUtterances:
+        - 'Where can I sign up?'
+        - 'How do I create an account?'
+        - 'Can you show me the signup page?'
+        - 'I want to register for an account. Where do I go?'
+        - 'Help me find the signup page.'
+        - 'Where do I go to sign up?'
+        - 'Sign up for an account'
+        - 'Where is the registration page?'
+        - 'How do I access the signup page?'
+        - 'Can you direct me to the signup page?'
+      FulfillmentActivity:
+        Type: 'ReturnIntent'
+      ConclusionStatement:
+        Messages:
+          - ContentType: 'PlainText'
+            Content: 'If you are logged out, then signup button is on the top right corner.'
+
+  SupportIntent:
+    Type: 'AWS::Lex::Intent'
+    Properties:
+      Name: 'SupportIntent'
+      SampleUtterances:
+        - 'I have concern with the booking.'
+        - 'My booking is not processed.'
+        - 'I want to get a refund.'
+        - 'I have an issue.'
+        - 'I want to talk to customer service.'
+        - 'The room was disgusting.'
+        - 'The service was not up to the mark.'
+      FulfillmentActivity:
+        Type: 'CodeHook'
+        CodeHook:
+          MessageVersion: '1.0'
+          Uri: 'arn:aws:lambda:us-east-1:381492038386:function:lex-processor'
+      Slots:
+        - Name: 'choice'
+          SlotType: 'AMAZON.FreeFormInput'
+          SlotConstraint: 'Optional'
+          ValueElicitationPrompt:
+            MaxAttempts: 2
+            Messages:
+              - ContentType: 'PlainText'
+                Content: 'I understand your concern. Do you want to chat with our customer representative? Yes/No'
+
+  BookingInformationIntent:
+    Type: 'AWS::Lex::Intent'
+    Properties:
+      Name: 'BookingInformationIntent'
+      SampleUtterances:
+        - 'Can you show me my booking details?'
+        - 'I need the details of my reservation.'
+        - 'What\'s the status of my booking?'
+        - 'Please provide my booking information.'
+        - 'Can you fetch my reservation details?'
+        - 'I want to see my booking confirmation.'
+        - 'Show me the details of my recent booking.'
+        - 'Get my reservation information.'
+        - 'Can you pull up my booking details?'
+        - 'I need to check the details of my booking.'
+        - 'Can you show me my booking details for reference number {booking-reference-number}?'
+        - 'I need the details of my reservation with reference {booking-reference-number}.'
+        - 'What\'s the status of my booking with reference number {booking-reference-number}?'
+        - 'Please provide my booking information for reference {booking-reference-number}.'
+        - 'Can you fetch my reservation details for reference {booking-reference-number}?'
+        - 'I want to see my booking confirmation for reference {booking-reference-number}.'
+        - 'Show me the details of my recent booking with reference number {booking-reference-number}.'
+        - 'Get my reservation information for reference {booking-reference-number}.'
+        - 'Can you pull up my booking details with reference number {booking-reference-number}?'
+        - 'I need to check the details of my booking with reference number {booking-reference-number}.'
+      FulfillmentActivity:
+        Type: 'CodeHook'
+        CodeHook:
+          MessageVersion: '1.0'
+          Uri: 'arn:aws:lambda:us-east-1:381492038386:function:lex-processor'
+      Slots:
+        - Name: 'booking-reference-number'
+          SlotType: 'AMAZON.AlphaNumeric'
+          SlotConstraint: 'Required'
+          ValueElicitationPrompt:
+            MaxAttempts: 2
+            Messages:
+              - ContentType: 'PlainText'
+                Content: 'Please give your booking reference number'
+
+

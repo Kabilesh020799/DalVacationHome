@@ -1,31 +1,29 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import "./style.scss";
 import SupportChat from "../../components/support-chat/SupportChat";
-import ChatBot from "../../components/chat-bot/ChatBot";
-//request access to server: https://cors-anywhere.herokuapp.com/
+import { ChatContext } from "../../components/support-chat/ChatProvider";
 
 const Tickets = () => {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [ticketId, setTicketId] = useState("");
   const [showChat, setShowChat] = useState(false);
+  const chatContext = useContext(ChatContext);
 
-  localStorage.setItem("userId", "test@gmail.com"); //TODO: do this in login page
-  localStorage.setItem("userType", "CUSTOMER"); //TODO: do this in login page
-  const userId = localStorage.getItem("userId");
-  const userType = localStorage.getItem("userType");
+  const userId = chatContext.userId;
+  const userType = chatContext.userType;
 
+  console.log(userId);
   useEffect(() => {
     const fetchTickets = async () => {
       try {
         const response = await axios.post(
-          "https://cors-anywhere.herokuapp.com/https://us-central1-sample-311412.cloudfunctions.net/getTicketDetails",
-          { userId: userId, userType: userType },
+          "https://us-central1-sample-311412.cloudfunctions.net/getTickets",
+          { userId: userId, userType: userType.toUpperCase() },
           {
             headers: {
               "Content-Type": "application/json",
-              "x-requested-with": "XMLHttpRequest",
             },
           }
         );
@@ -42,17 +40,26 @@ const Tickets = () => {
     };
 
     fetchTickets();
-  }, [userId]);
+  }, [userId, userType]);
 
   const handleCloseTicket = async (ticketId) => {
+    console.log("close ticket button clicked");
     try {
+      // Find the ticket with the given ID
+      const ticket = tickets.find((ticket) => ticket.ticketId === ticketId);
+
+      // Check if the ticket is already closed
+      if (ticket && ticket.status === "closed") {
+        alert("Ticket is already closed.");
+        return; // Exit the function if the ticket is already closed
+      }
+
       const response = await axios.post(
-        "https://cors-anywhere.herokuapp.com/https://us-central1-sample-311412.cloudfunctions.net/closeTicket",
+        "https://us-central1-sample-311412.cloudfunctions.net/closeTicket",
         { ticketId },
         {
           headers: {
             "Content-Type": "application/json",
-            "x-requested-with": "XMLHttpRequest",
           },
         }
       );
@@ -108,13 +115,14 @@ const Tickets = () => {
                 <p>
                   <strong>Status:</strong> {ticket.status}
                 </p>
-                <button
-                  onClick={() => handleCloseTicket(ticket.ticketId)}
-                  className="close-button"
-                  disabled={true}
-                >
-                  Close Ticket
-                </button>
+                {ticket.status !== "closed" && (
+                  <button
+                    onClick={() => handleCloseTicket(ticket.ticketId)}
+                    className="close-button"
+                  >
+                    Close Ticket
+                  </button>
+                )}
                 <br></br>
                 <br></br>
                 {ticket.status !== "closed" && (
@@ -135,7 +143,6 @@ const Tickets = () => {
               handleChatClose={handleChatClose}
             />
           )}
-          {/* <ChatBot /> */}
         </div>
       )}
     </div>

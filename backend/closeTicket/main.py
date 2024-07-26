@@ -14,7 +14,8 @@ def close_ticket(request):
 
     # Set CORS headers for the main request
     headers = {
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json'
     }
 
     # Parse the request JSON

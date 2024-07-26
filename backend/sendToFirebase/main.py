@@ -1,6 +1,5 @@
 import base64
 import json
-import random
 import firebase_admin
 from firebase_admin import credentials, db
 from google.cloud import firestore

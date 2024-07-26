@@ -1,4 +1,7 @@
 frontend/node_modules
+backend/publishSNSMessage/node_modules
+backend/subscribeSNSTopic/node_modules
+frontend/package-lock.json
 frontend/package-lock.json
 .DS_Store
 backend/lex-processor-lambda/lex-processor.zip
@@ -6,3 +9,6 @@ backend/lex-processor-lambda/lex-processor.zip
 backend/lex-backend/.idea
 backend/lex-backend/target
 backend/lex-processor-lambda/.idea
+backend/bookingApproval/node_modules
+backend/getBookingsRefereneces/node_modules
+backend/getBookingDetails/node_modules

@@ -12,9 +12,15 @@ import { doc, or, setDoc } from "firebase/firestore";
 const ChatContext = createContext(null);
 
 function ChatProvider({ children }) {
-  const userId = "test@gmail.com"; // Fetch from auth
+  let userId = localStorage.getItem("email");
+  let userType = localStorage.getItem("userType");
   const [chats, setChats] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  if (userId === null) {
+    userId = "";
+    userType = "";
+  }
 
   useEffect(() => {
     const chatsRef = collection(firestore, "tickets");
@@ -36,7 +42,7 @@ function ChatProvider({ children }) {
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [userId, userType]);
 
   const sendMessage = async (inputMessage, currentChat, userId) => {
     const to =
@@ -90,6 +96,7 @@ function ChatProvider({ children }) {
         chats: chats,
         loading: loading,
         userId: userId,
+        userType: userType,
         sendMessage: sendMessage,
         markAsRead: markAsRead,
       }}
