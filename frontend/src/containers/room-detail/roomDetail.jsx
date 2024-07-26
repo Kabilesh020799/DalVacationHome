@@ -130,7 +130,7 @@ const RoomDetail = () => {
             ))}
           </div>
 
-          <Box sx={{ mt: 4 }}>
+          <Box sx={feedbacks?.length ? { mt: 4 } : { display: 'none' }}>
             <Typography variant="h5" component="div" gutterBottom>
               Feedback
             </Typography>
