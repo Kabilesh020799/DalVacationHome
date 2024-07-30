@@ -13,7 +13,7 @@ exports.handler = async (event) => {
 
         const bookingReference = uuidv4();
 
-        const bookingExists = await checkRoomBooking(roomId);
+        const bookingExists = await checkRoomBooking(roomId, fromDate, toDate);
 
         if (!bookingExists) {
             await saveRoomBooking(email, roomId, bookingReference, fromDate, toDate, "confirmed", guests);
@@ -66,15 +66,17 @@ exports.handler = async (event) => {
     }
 };
 
-const checkRoomBooking = async (roomId) => {
+const checkRoomBooking = async (roomId, fromDate, toDate) => {
     const params = {
         TableName: tableName,
-        FilterExpression: '#id = :roomId',
+        FilterExpression: '#id = :roomId AND ((:fromDate BETWEEN fromDate AND toDate) OR (:toDate BETWEEN fromDate AND toDate) OR (fromDate BETWEEN :fromDate AND :toDate) OR (toDate BETWEEN :fromDate AND :toDate))',
         ExpressionAttributeNames: {
             '#id': 'id'
         },
         ExpressionAttributeValues: {
-            ':roomId': roomId
+            ':roomId': roomId,
+            ':fromDate': fromDate,
+            ':toDate': toDate
         }
     };
 
